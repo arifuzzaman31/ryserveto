@@ -44,13 +44,13 @@ In your terminal, run the following command.
 <ArticleTab>
  
 ```bash
-git clone https://github.com/arifuzzaman31/ryserve-node
+git clone https://github.com/arifuzzaman31/ryserveto
 ```
 </ArticleTab>
 <ArticleTab>
 
 ```bash
-git clone https://github.com/arifuzzaman31/ryserve-node
+git clone https://github.com/arifuzzaman31/ryserveto
 ```
 
 </ArticleTab>
@@ -59,7 +59,7 @@ git clone https://github.com/arifuzzaman31/ryserve-node
 ## Step 2: Position yourself at the root
 
 ```bash
-cd ryserve-node
+cd ryserveto
 ```
 
 You should run all commands in the following steps from the root of the project.
@@ -68,7 +68,6 @@ You should run all commands in the following steps from the root of the project.
 We rely on [postgresql](postgresql://user:password@localhost:5432/ryserve?schema=public) and recommend you use the scripts below to provision a database with the right extensions.  
 You can access the database at [localhost:5432](localhost:5432), with user `ryserve` and password .
 </ArticleTabs>
-
 ## Step 4: Setup environment variables
 
 Use environment variables or `.env` files to configure your project.
@@ -77,7 +76,15 @@ Copy the `.env.local`:
 ```bash
 cp .env.local .env
 ```
-
+```bash
+cp npm install
+```
+```bash
+cp npx prisma generate
+```
+```bash
+cp npx prisma migration dev --name ryserve_two
+```
 ## Step 5: Run The Site
 Use bash and run the command.
 
