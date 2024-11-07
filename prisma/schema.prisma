@@ -1,0 +1,453 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters", "prismaSchemaFolder", "fullTextSearch"]
+  output          = "./generated/prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id           Int         @id @default(autoincrement())
+  sessionToken String      @unique
+  userId       Int?
+  expires      DateTime
+  loggerType   loggerType?
+}
+
+model Owner {
+  id               Int             @id @default(autoincrement())
+  name             String?
+  email            String?         @unique
+  userType         UserType?       @default(BUSINESS_OWNER)
+  ownerId          Int?
+  roleId           Int?
+  roles            RolePermission? @relation(fields: [roleId], references: [id])
+  branch           Branch[]
+  birthDate        DateTime?
+  phoneNumber      String?         @db.VarChar(50)
+  country          String?         @db.VarChar(50)
+  city             String?         @db.VarChar(50)
+  location         String?         @db.Text
+  residenceAddress String?
+  occupation       String?
+  designation      String?
+  nid              String?
+  tin              String?
+  havingBusiness   Boolean?        @default(false)
+  property         Property[]
+  booking          Booking[]
+  password         String?
+  loggerType       loggerType?
+  isVerify         Boolean         @default(false)
+  status           Boolean         @default(false)
+  deletedAtAt      DateTime?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@index([name, email, phoneNumber, roleId])
+}
+
+model User {
+  id               Int       @id @default(autoincrement())
+  email            String?   @unique
+  firstName        String?
+  lastName         String?
+  name             String?
+  userType         UserType? @default(CUSTOMER)
+  birthDate        DateTime?
+  phoneNumber      String?
+  picture          String?
+  country          String?
+  city             String?
+  location         String?
+  residenceAddress String?
+  occupation       String?
+  designation      String?
+  nid              Int?
+  tin              String?
+  booking          Booking[]
+  password         String?
+  otp              Int?
+  otpExpireAt      DateTime?
+  isVerify         Boolean   @default(false)
+  status           Boolean   @default(false)
+  deletedAt        DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([name, email, phoneNumber, city])
+}
+
+model RolePermission {
+  id          Int       @id @default(autoincrement())
+  roleName    String
+  permissions String[]
+  branchId    Int
+  branch      Branch    @relation(fields: [branchId], references: [id])
+  owner       Owner[]
+  status      Boolean   @default(true)
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([roleName])
+}
+
+model wishList {
+  id         Int               @id @default(autoincrement())
+  type       BusinessCategory? @default(OTHERS)
+  userId     Int?
+  propertyId Int?
+  Property   Property?         @relation(fields: [propertyId], references: [id])
+  status     Boolean           @default(false)
+  deletedAt  DateTime?
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  @@index([userId, propertyId])
+}
+
+model Property {
+  id                  Int               @id @default(autoincrement())
+  ownerId             Int
+  owner               Owner             @relation(fields: [ownerId], references: [id])
+  type                BusinessCategory? @default(OTHERS)
+  listingName         String
+  slug                String?
+  title               String?
+  subTitle            String?
+  logo                String?
+  images              Json?
+  description         String?
+  terms               String?
+  slot                Json?
+  offday              Json?
+  cuisines            String[]
+  reservationCategory Category?
+  tables              Table[]
+  seatBed             SeatBed[]
+  booking             Booking[]
+  wishLists           wishList[]
+  food                Food[]
+  branches            Branch[]
+  event               Events[]
+  sectSymb            Int?
+  priority            Int?
+  optionalData        Json?
+  eventStatus         Boolean           @default(false)
+  status              Boolean           @default(true)
+  deletedAt           DateTime?
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+
+  @@index([listingName, ownerId, type, reservationCategory, sectSymb])
+}
+
+model Branch {
+  id             Int              @id @default(autoincrement())
+  ownerId        Int
+  owner          Owner            @relation(fields: [ownerId], references: [id])
+  propertyId     Int
+  property       Property         @relation(fields: [propertyId], references: [id])
+  branchName     String?
+  slug           String?
+  images         Json?
+  description    String?
+  level          String?
+  terms          String?
+  city           String?
+  area           String?
+  country        String?
+  amenities      Json?
+  amenity        String[]
+  latitude       String?
+  longitude      String?
+  location       String?
+  optionalData   Json?
+  bookingCount   Int              @default(0)
+  booking        Booking[]
+  events         Events[]
+  rolePermission RolePermission[]
+  tables         Table[]
+  status         Boolean          @default(true)
+  deletedAt      DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@index([branchName, propertyId, ownerId, area, city])
+}
+
+model Table {
+  id         Int       @id @default(autoincrement())
+  propertyId Int
+  property   Property  @relation(fields: [propertyId], references: [id])
+  branchId   Int
+  branch     Branch  @relation(fields: [branchId], references: [id])
+  type       compType?
+  capacity   Int?
+  position   String
+  size       String
+  image      String?
+  splitable  Boolean   @default(true)
+  ryservable Boolean   @default(true)
+  status     Boolean   @default(true)
+  booking    Booking[]
+  deletedAt  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([propertyId,branchId,capacity])
+}
+
+model SeatBed {
+  id                   Int       @id @default(autoincrement())
+  propertyId           Int
+  Property             Property  @relation(fields: [propertyId], references: [id])
+  type                 compType?
+  roomNo               String
+  breakfast            String
+  image                String?
+  accomodationCapacity String
+  extraBedPolicy       String
+  status               Boolean   @default(true)
+  booking              Booking[]
+  deletedAt            DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@index([propertyId, type])
+}
+
+model FoodCategory {
+  id      Int     @id   @default(autoincrement())
+  categoryName    String
+  images    Json?
+  priority    Int   @default(0)
+  categoryType  String?
+  optionalData Json?
+  foods        Food[]
+  status       Boolean   @default(true)
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt   
+}
+
+model Food {
+  id            Int       @id @default(autoincrement())
+  categoryId    Int
+  category      FoodCategory   @relation(fields: [categoryId],references: [id])
+  name          String
+  images        Json?
+  optionalData  Json?
+  rating        Float     @default(0.0)
+  propertyId    Int
+  property      Property  @relation(fields: [propertyId], references: [id])
+  price         Json?
+  description   String?
+  status        Boolean   @default(true)
+  deletedAt     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([name, propertyId])
+}
+
+model Section {
+  id        Int         @id @default(autoincrement())
+  title     String
+  slug      String?
+  subtitle  String?
+  pattern   String
+  contains  ContentType
+  signature Int         @default(0)
+  status    Boolean     @default(true)
+  deletedAt DateTime?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model Events {
+  id          Int         @id @default(autoincrement())
+  propertyId  Int
+  property    Property    @relation(fields: [propertyId], references: [id])
+  branchId    Int?
+  branch      Branch?     @relation(fields: [branchId], references: [id])
+  location    String?
+  mapLocation String?
+  address     String?
+  capacity    Int         @default(10)
+  startDate   DateTime
+  endDate     DateTime?
+  status      Boolean     @default(true)
+  evbooking   Evbooking[]
+  deletedAt   DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime?
+
+  @@index([propertyId, branchId, mapLocation])
+}
+
+model Booking {
+  id              Int           @id @default(autoincrement())
+  propertyId      Int?
+  property        Property?     @relation(fields: [propertyId], references: [id])
+  branchId        Int
+  branch          Branch        @relation(fields: [branchId], references: [id])
+  tableId         Int?
+  table           Table?        @relation(fields: [tableId], references: [id])
+  seatBedId       Int?
+  seatBed         SeatBed?      @relation(fields: [seatBedId], references: [id])
+  ownerId         Int?
+  owner           Owner?        @relation(fields: [ownerId], references: [id])
+  customerId      Int?
+  customer        User?         @relation(fields: [customerId], references: [id])
+  customerName    String
+  phoneNumber     String?
+  startDate       DateTime
+  endDate         DateTime
+  slot            String?
+  comment         String?
+  customerRequest String?
+  cancelReason    String?
+  guestNumber     Int?          @default(value: 0)
+  amount          Int           @default(value: 0)
+  vat             Int           @default(value: 0)
+  discount        Int           @default(value: 0)
+  grandTotal      Int           @default(value: 0)
+  status          BookingStatus @default(value: ON_HOLD)
+  bookingType     String?       @default(value: "Regular")
+  optionalData    Json?
+  payments        Payment[]
+  deletedAt       DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([propertyId, branchId, ownerId, customerId, phoneNumber, customerName, slot, startDate, status])
+}
+
+model Payment {
+  id          Int           @id @default(autoincrement())
+  bookingId   Int
+  booking     Booking       @relation(fields: [bookingId], references: [id])
+  paymentDate DateTime?
+  paymentInfo String?
+  status      PaymentStatus
+  deletedAt   DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([bookingId, paymentDate, status])
+}
+
+model Amenities {
+  id        Int       @id @default(autoincrement())
+  name      String
+  icon      String?
+  price     Float     @default(0.0)
+  status    Boolean   @default(true)
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([name])
+}
+
+model Cuisine {
+  id        Int       @id @default(autoincrement())
+  name      String
+  status    Boolean   @default(true)
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([name])
+}
+
+model Evbooking {
+  id           Int           @id @default(autoincrement())
+  username     String
+  phoneNumber  String
+  email        String?
+  address      String?
+  ticketNumber String
+  person       Int           @default(1)
+  price        Int           @default(0)
+  amount       Float         @default(0.0)
+  vat          Float         @default(0.0)
+  payStatus    PaymentStatus
+  eventDate    DateTime
+  eventId      Int
+  event        Events        @relation(fields: [eventId], references: [id])
+  status       Boolean       @default(false)
+  optionalData Json?
+  issueAt      DateTime
+  deletedAt    DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+enum PaymentStatus {
+  PAID
+  UNPAID
+  OTHER
+}
+
+enum ContentType {
+  FOOD
+  PROPERTY
+}
+
+enum BookingStatus {
+  CONFIRMED
+  DEACTIVE
+  ON_HOLD
+  CANCELED
+  COMPLETED
+}
+
+enum loggerType {
+  DASHBOARD_USER
+  APPS_USER
+}
+
+enum UserType {
+  CRM_EDITOR
+  BUSINESS_OWNER
+  BUSINESS_MANAGER
+  LISTING_MANAGER
+  CUSTOMER
+}
+
+enum compType {
+  KING
+  MEDIUM
+  LARGE
+  SINGLE
+  TWIN
+  QUEEN
+}
+
+enum ServiceType {
+  TABLE_RESERVATION
+  ROOM_RESERVATION
+  OTHERS
+}
+
+enum Category {
+  ROOM
+  TABLE
+  TICKET
+  APPOINTMENT
+}
+
+enum BusinessCategory {
+  HOTEL
+  RESTAURANT
+  SERVICE_APARTMENT
+  MOVIE_THEATER
+  SPA
+  OTHERS
+}

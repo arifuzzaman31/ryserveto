@@ -1,0 +1,32 @@
+{
+  "name": "tenant",
+  "version": "1.0.0",
+  "description": "create a project\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[Dmultitenancy project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "multitenancy"
+  ],
+  "author": "arifuzzaman31",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^5.18.0",
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "exceljs": "^4.4.0",
+    "express": "^4.19.2",
+    "express-async-handler": "^1.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "node": "^22.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4",
+    "prisma": "^5.18.0"
+  }
+}
