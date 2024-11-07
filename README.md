@@ -77,18 +77,18 @@ Copy the `.env.local`:
 cp .env.local .env
 ```
 ```bash
-cp npm install
+npm install
 ```
 ```bash
-cp npx prisma generate
+npx prisma generate
 ```
 ```bash
-cp npx prisma migration dev --name ryserve_two
+npx prisma migration dev --name ryserve_two
 ```
 ## Step 5: Run The Site
 Use bash and run the command.
 
 Copy the `npm run dev`:
 ```bash
-cp npm run dev
+npm run dev
 ```

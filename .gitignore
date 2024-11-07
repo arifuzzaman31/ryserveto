@@ -6,3 +6,4 @@ prisma/migrations
 .scripts/
 .github/
 .git/
+.uploads/*
