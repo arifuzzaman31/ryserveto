@@ -18,7 +18,6 @@ app.use(express.json());
 
 app.use('/api/backend', adminRoute);
 // app.use('/api', [authRoute, userRoute]);
-app.use('/api', [userRoute]);
 app.listen(port,() => {
     console.log(`reserve-2 running on ${port}`);
 })

@@ -10,6 +10,9 @@ const property_controller = require("../controller/backend/property");
 const branch_controller = require("../controller/backend/branch");
 const table_controller = require("../controller/backend/table");
 const role_controller = require("../controller/backend/role");
+const util_controller = require("../controller/backend/utility");
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 // const booking_controller = require("../controller/backend/booking");
 // const report_controller = require("../controller/backend/report");
 // const dashboard_controller = require("../controller/backend/dashboard");
@@ -18,6 +21,9 @@ const adminMiddleware = require("../middleware/adminMiddleware");
 routes.post("/login", auth_controller.attempt_to_login);
 routes.get("/me",adminMiddleware, auth_controller.auth_me);
 routes.get("/permission",adminMiddleware, auth_controller.all_permission);
+
+routes.post("/upload-property", upload.single('file'), util_controller.upload_property);
+routes.post("/upload-branch", upload.single('file'), util_controller.upload_branch);
 
 routes
   .route("/employee").all(adminMiddleware)
