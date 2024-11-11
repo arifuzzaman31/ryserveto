@@ -6,21 +6,15 @@ exports.upload_property = asyncHandler(async (req, res) => {
     try {
         const workbook = new ExcelJS.Workbook();
         const csvStream = await workbook.csv.readFile(req.file.path);
-          let dataset = []
           let rowData = []
-          // delete csvStream[0]
         csvStream.eachRow((row, rowNumber) => {   
-                console.log(`Row ${rowNumber}:`);
                 if(rowNumber !=1) rowData.push(row.values)
         });
-        let cleanedData = rowData.map(subArray => {
-            let index = subArray.indexOf(null);
-            if (index !== -1) {
-                subArray.splice(index, 1); // Remove the first occurrence of null
-            }
-            return subArray;
-        });
-        res.send(cleanedData);
+        // const modify = rowData.map(v => {
+        //   return v.filter((t,i) => i != 0);
+        // });
+        res.status(200).send(rowData);
+
     } catch (error) {
         console.error('Error reading CSV file:', error);
         res.status(500).send('Error processing the file.');
