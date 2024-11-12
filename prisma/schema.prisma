@@ -46,6 +46,7 @@ model Owner {
   deletedAtAt      DateTime?
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
+  updatedBy        Int             @default(0)
 
   @@index([name, email, phoneNumber, roleId])
 }
@@ -77,6 +78,7 @@ model User {
   deletedAt        DateTime?
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
+  updatedBy        Int             @default(0)
 
   @@index([name, email, phoneNumber, city])
 }
@@ -92,7 +94,7 @@ model RolePermission {
   deletedAt   DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-
+  updatedBy   Int       @default(0)
   @@index([roleName])
 }
 
@@ -106,7 +108,7 @@ model wishList {
   deletedAt  DateTime?
   createdAt  DateTime          @default(now())
   updatedAt  DateTime          @updatedAt
-
+  updatedBy  Int               @default(0)
   @@index([userId, propertyId])
 }
 
@@ -142,7 +144,7 @@ model Property {
   deletedAt           DateTime?
   createdAt           DateTime          @default(now())
   updatedAt           DateTime          @updatedAt
-
+  updatedBy           Int       @default(0)
   @@index([listingName, ownerId, type, reservationCategory, sectSymb])
 }
 
@@ -176,7 +178,7 @@ model Branch {
   deletedAt      DateTime?
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
-
+  updatedBy   Int       @default(0)
   @@index([branchName, propertyId, ownerId, area, city])
 }
 
@@ -198,7 +200,7 @@ model Table {
   deletedAt  DateTime?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
-
+  updatedBy   Int       @default(0)
   @@index([propertyId,branchId,capacity])
 }
 
@@ -217,7 +219,7 @@ model SeatBed {
   deletedAt            DateTime?
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
-
+  updatedBy            Int       @default(0)
   @@index([propertyId, type])
 }
 
@@ -232,7 +234,8 @@ model FoodCategory {
   status       Boolean   @default(true)
   deletedAt    DateTime?
   createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt   
+  updatedAt    DateTime  @updatedAt
+  updatedBy   Int       @default(0)
 }
 
 model Food {
@@ -251,7 +254,7 @@ model Food {
   deletedAt     DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-
+  updatedBy   Int       @default(0)
   @@index([name, propertyId])
 }
 
@@ -261,12 +264,15 @@ model Section {
   slug      String?
   subtitle  String?
   pattern   String
-  contains  ContentType
+  type      ContentType
   signature Int         @default(0)
+  content   Json?
+  optionalData  Json?
   status    Boolean     @default(true)
   deletedAt DateTime?
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
+  updatedBy   Int       @default(0)
 }
 
 model Events {
@@ -286,7 +292,7 @@ model Events {
   deletedAt   DateTime?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime?
-
+  updatedBy   Int       @default(0)
   @@index([propertyId, branchId, mapLocation])
 }
 
@@ -324,7 +330,7 @@ model Booking {
   deletedAt       DateTime?
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
-
+  updatedBy   Int       @default(0)
   @@index([propertyId, branchId, ownerId, customerId, phoneNumber, customerName, slot, startDate, status])
 }
 
@@ -338,7 +344,7 @@ model Payment {
   deletedAt   DateTime?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-
+  updatedBy   Int       @default(0)
   @@index([bookingId, paymentDate, status])
 }
 
@@ -351,7 +357,7 @@ model Amenities {
   deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-
+  updatedBy   Int       @default(0)
   @@index([name])
 }
 
@@ -362,7 +368,7 @@ model Cuisine {
   deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-
+  updatedBy   Int       @default(0)
   @@index([name])
 }
 
@@ -387,6 +393,7 @@ model Evbooking {
   deletedAt    DateTime?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+  updatedBy   Int       @default(0)
 }
 
 enum PaymentStatus {

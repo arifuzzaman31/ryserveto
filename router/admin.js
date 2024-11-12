@@ -2,10 +2,8 @@ const express = require("express");
 const routes = express.Router();
 const owner_controller = require("../controller/backend/owner");
 const auth_controller = require("../controller/backend/auth");
-
 const amenity_controller = require("../controller/backend/amenities");
 const cuisine_controller = require("../controller/backend/cuisine");
-
 const property_controller = require("../controller/backend/property");
 const branch_controller = require("../controller/backend/branch");
 const table_controller = require("../controller/backend/table");
@@ -97,6 +95,11 @@ routes
   .get(role_controller.get_role)
   .put(role_controller.update_role)
   .delete(role_controller.delete_role);
+
+routes
+  .route("/make-section").all(adminMiddleware)
+  .get(util_controller.section_list)
+  .post(util_controller.create_section);
 
 //   routes
 //     .route("/booking").all(adminMiddleware)
