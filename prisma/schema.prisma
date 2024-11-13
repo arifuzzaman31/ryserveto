@@ -265,10 +265,12 @@ model Section {
   subtitle  String?
   pattern   String
   type      ContentType
+  group     BusinessCategory    @default(RESTAURANT)
   signature Int         @default(0)
   content   Json?
   optionalData  Json?
   status    Boolean     @default(true)
+  precedency  Int   @default(0)
   deletedAt DateTime?
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
@@ -405,6 +407,7 @@ enum PaymentStatus {
 enum ContentType {
   FOOD
   PROPERTY
+  OTHER
 }
 
 enum BookingStatus {

@@ -46,14 +46,18 @@ exports.upload_branch = asyncHandler(async (req, res) => {
 exports.create_section = asyncHandler(async(req,res) => {
   try {
     const result = await prisma.$transaction(async (prisma) => {
+      const data = await req.body
       const sect = await prisma.section.create({
         data: {
           title: data.title,
           subtitle: data.subtitle,
           slug: slugify(data.title ?? data.pattern),
+          type: data.type,
+          group: data.group,
           pattern: data.pattern,
-          contains: data.contains,
           signature: data.signature ?? 0,
+          content: data.content,
+          optionalData: data.optionalData,
           status: data.status == "true" ? true : false,
         },
       });

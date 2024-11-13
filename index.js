@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const adminRoute = require('./router/admin');
-// const authRoute = require('./router/authRoute');
+const authRoute = require('./router/authRoute');
 const userRoute = require('./router/user');
 dotenv.config();
 const app = express();
@@ -17,7 +17,7 @@ const port = process.env.PORT;
 app.use(express.json());
 
 app.use('/api/backend', adminRoute);
-// app.use('/api', [authRoute, userRoute]);
+app.use('/api', [authRoute, userRoute]);
 app.listen(port,() => {
     console.log(`reserve-2 running on ${port}`);
 })

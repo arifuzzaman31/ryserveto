@@ -1,4 +1,4 @@
-const prisma = require("../db/prisma");
+const prisma = require("../lib/db/prisma");
 const helper = require("../helper/helper");
 const authService = require("../services/auth")
 const models = require("../models/model")

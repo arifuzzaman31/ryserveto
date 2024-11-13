@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const userService = require("../../services/userService")
 const authService = require("../../services/auth")
-const prisma = require("../../db/prisma")
+const prisma = require("../../lib/db/prisma");
 
 exports.otp_login = asyncHandler(async (req, res) => {
     const { password, platform, isOtpVerify } = await req.body

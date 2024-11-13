@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const prisma = require("../../db/prisma");
+const prisma = require("../../lib/db/prisma");
 const helper = require("../../helper/helper");
 
 exports.create_booking = asyncHandler(async (req, res) => {
