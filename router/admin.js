@@ -8,6 +8,8 @@ const property_controller = require("../controller/backend/property");
 const branch_controller = require("../controller/backend/branch");
 const table_controller = require("../controller/backend/table");
 const role_controller = require("../controller/backend/role");
+const category_controller = require("../controller/backend/category");
+const food_controller = require("../controller/backend/food");
 const util_controller = require("../controller/backend/utility");
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
@@ -100,6 +102,16 @@ routes
   .route("/make-section").all(adminMiddleware)
   .get(util_controller.section_list)
   .post(util_controller.create_section);
+
+routes
+  .route("/category").all(adminMiddleware)
+  .get(category_controller.category_list)
+  .post(category_controller.create_category);
+
+routes
+  .route("/food").all(adminMiddleware)
+  .get(food_controller.food_list)
+  .post(food_controller.create_food);
 
 //   routes
 //     .route("/booking").all(adminMiddleware)

@@ -56,3 +56,34 @@ exports.property_list = asyncHandler(async(req,res) => {
     data: property,
   });
 });
+
+exports.property_food = asyncHandler(async(req,res) => {
+  const {group} = await req.query;
+  const id = parseInt(req.params.id, 10);
+  const property_food = await prisma.Property.findFirst({
+    where: {
+      id: id,
+      type: group,
+    },
+    select: {
+      id:true,
+      type:true,
+      listingName:true,
+      title:true,
+      subTitle:true,
+      logo:true,
+      cuisines:true,
+      status:true,
+      food: { 
+        select: { 
+          id:true,
+          name:true,
+          images:true,
+          propertyId:true,
+          status:true 
+        } 
+      },
+    },
+  });
+  return res.status(200).send(property_food);
+});
