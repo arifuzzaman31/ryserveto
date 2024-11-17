@@ -5,9 +5,9 @@ const helper = require("../../helper/helper");
 exports.create_booking = asyncHandler(async (req, res) => {
   const data = await req.body;
   try {
-    const property = await prisma.SubAssetComponent.findFirst({
+    const property = await prisma.property.findFirst({
       where: {
-        id: data.subAssetCompId,
+        id: data.id
       },
       include: {
         owner: {
@@ -18,9 +18,9 @@ exports.create_booking = asyncHandler(async (req, res) => {
 
     const { id, name, phoneNumber } = await req.user;
     const bookingData = {
-      asset: { connect: { id: property.assetId } },
-      subAsset: { connect: { id: property.subAssetId } },
-      subAssetComponent: { connect: { id: data.subAssetCompId } },
+      property: { connect: { id: property.id } },
+      branch: { connect: { id: property.subAssetId } },
+      table: { connect: { id: data.subAssetCompId } },
       owner: { connect: { id: property.ownerId } },
       customer: { connect: { id: id } },
       customerName: name,
