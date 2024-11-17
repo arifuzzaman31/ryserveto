@@ -3,23 +3,9 @@ const prisma = require("../../lib/db/prisma");
 
 exports.property_list = asyncHandler(async(req,res) => {
     const {pageNo,perPage,signature,group,type } = await req.query;
-    let where = {
-        sectSymb:parseInt(signature,10),
-        type:group
-    };
-    let include = {}
-    if(type=='FOOD'){
-        where.id = parseInt(signature,10)
-        include.food = {
-            select: {
-                id:true,
-                name:true,
-                images:true,
-                propertyId:true,
-                status:true
-            }
-        }
-    }
+    let where = {};
+    if(signature){where.sectSymb = parseInt(signature,10)}
+    if(type){ where.type = group }
   const perPg = perPage ? Number(perPage) : 10;
   const from = Number(pageNo * perPg) - Number(perPg);
 
@@ -32,7 +18,6 @@ exports.property_list = asyncHandler(async(req,res) => {
       orderBy: {
         createdAt: "desc",
       },
-    //   include,
       select: {
         id: true,
         ownerId: true,
@@ -43,8 +28,7 @@ exports.property_list = asyncHandler(async(req,res) => {
         reservationCategory: true,
         // branches: true,
         status: true
-        // tables: true,
-        // prices: true,
+        // tables: true
       },
     }),
   ]);
@@ -55,6 +39,40 @@ exports.property_list = asyncHandler(async(req,res) => {
     },
     data: property,
   });
+});
+
+exports.get_property = asyncHandler(async(req,res) => {
+  const id = parseInt(req.params.id, 10);
+  const property = await prisma.Property.findFirst({
+    where: {
+      id: id
+    },
+    select: {
+      id:true,
+      type:true,
+      listingName:true,
+      title:true,
+      subTitle:true,
+      logo:true,
+      cuisines:true,
+      status:true,
+      branches: {
+        include:{
+          tables:true
+        }
+      },
+      food: { 
+        select: { 
+          id:true,
+          name:true,
+          images:true,
+          propertyId:true,
+          status:true 
+        } 
+      },
+    },
+  });
+  return res.status(200).send(property);
 });
 
 exports.property_food = asyncHandler(async(req,res) => {

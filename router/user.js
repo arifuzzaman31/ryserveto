@@ -6,6 +6,7 @@ const property_controller = require("../controller/frontend/property");
 const cuisine_controller = require("../controller/backend/cuisine");
 
 routes.get("/property", property_controller.property_list);
+routes.get("/property/:id", property_controller.get_property);
 routes.get("/property-food/:id", property_controller.property_food);
 routes.get("/cuisine", cuisine_controller.cuisine_list);
 routes.get("/home-page", home_controller.home_list);

@@ -113,6 +113,11 @@ routes
   .get(food_controller.food_list)
   .post(food_controller.create_food);
 
+routes
+    .route("/food/:id").all(adminMiddleware)
+    .get(food_controller.get_food)
+    .put(food_controller.update_food);
+    
 //   routes
 //     .route("/booking").all(adminMiddleware)
 //     .get(booking_controller.get_all_booking)
