@@ -168,6 +168,7 @@ model Branch {
   latitude       String?
   longitude      String?
   location       String?
+  address        String?
   optionalData   Json?
   bookingCount   Int              @default(0)
   booking        Booking[]

@@ -80,57 +80,28 @@ exports.allPermission = async() => {
       ]
   },
   {
-      name: "Property Asset",
-      permissions: [
-          {
-              "id": 9,
-              "permission_name": "Property Asset Create",
-              "slug": "property-asset-create",
-              "status": 1
-          },
-          {
-              "id": 10,
-              "permission_name": "Property Asset View",
-              "slug": "property-asset-view",
-              "status": 1
-          },
-          {
-              "id": 11,
-              "permission_name": "Property Asset Edit",
-              "slug": "property-asset-edit",
-              "status": 1,
-          },
-          {
-              "id": 12,
-              "permission_name": "Property Asset Delete",
-              "slug": "property-asset-delete",
-              "status": 1
-          }
-      ]
-  },
-  {
       name: "Reservation",
       permissions: [
           {
-              "id": 13,
+              "id": 9,
               "permission_name": "View Reservation",
               "slug": "reservation-view",
               "status": 1
           },
           {
-              "id": 14,
+              "id": 10,
               "permission_name": "Add Reservation",
               "slug": "reservation-create",
               "status": 1,
           },
           {
-              "id": 15,
+              "id": 11,
               "permission_name": "Edit Reservation",
               "slug": "reservation-edit",
               "status": 1
           },
           {
-              "id": 16,
+              "id": 12,
               "permission_name": "Delete Reservation",
               "slug": "reservation-delete",
               "status": 1
@@ -141,31 +112,31 @@ exports.allPermission = async() => {
       name: "Report",
       permissions: [
           {
-              "id": 17,
+              "id": 13,
               "permission_name": "Report View",
               "slug": "report-view",
               "status": 1
           },
           {
-              "id": 18,
+              "id": 14,
               "permission_name": "Revenue Report",
               "slug": "revenue-report",
               "status": 1
           },
           {
-              "id": 19,
+              "id": 15,
               "permission_name": "Upcoming Report",
               "slug": "upcoming-report",
               "status": 1,
           },
           {
-              "id": 20,
+              "id": 16,
               "permission_name": "Complete Report",
               "slug": "complete-report",
               "status": 1
           },
           {
-              "id": 21,
+              "id": 17,
               "permission_name": "Cancel Report",
               "slug": "cancel-report",
               "status": 1
@@ -176,25 +147,25 @@ exports.allPermission = async() => {
       name: "Roles",
       permissions: [
           {
-              "id": 22,
+              "id": 18,
               "permission_name": "Role Create",
               "slug": "role-create",
               "status": 1
           },
           {
-              "id": 23,
+              "id": 19,
               "permission_name": "Role View",
               "slug": "role-view",
               "status": 1
           },
           {
-              "id": 24,
+              "id": 20,
               "permission_name": "Role Edit",
               "slug": "role-edit",
               "status": 1,
           },
           {
-              "id": 25,
+              "id": 21,
               "permission_name": "Role Delete",
               "slug": "role-delete",
               "status": 1
@@ -205,25 +176,25 @@ exports.allPermission = async() => {
       name: "Employee",
       permissions: [
           {
-              "id": 26,
+              "id": 22,
               "permission_name": "Employee Create",
               "slug": "employee-create",
               "status": 1
           },
           {
-              "id": 27,
+              "id": 23,
               "permission_name": "Employee View",
               "slug": "employee-view",
               "status": 1
           },
           {
-              "id": 28,
+              "id": 24,
               "permission_name": "Employee Edit",
               "slug": "employee-edit",
               "status": 1,
           },
           {
-              "id": 29,
+              "id": 25,
               "permission_name": "Employee Delete",
               "slug": "employee-delete",
               "status": 1

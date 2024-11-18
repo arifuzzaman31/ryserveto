@@ -3,43 +3,58 @@ const userService = require("../../services/userService")
 const authService = require("../../services/auth")
 const prisma = require("../../lib/db/prisma");
 
-exports.otp_login = asyncHandler(async (req, res) => {
-    const { password, platform, isOtpVerify } = await req.body
-    if (platform == 'apps') {
-        const pathname = await req.query;
-        const userData = await userService.find_or_createUser(req.body);
-        if (pathname.for == "request-otp") {
-            if (!userData) {
-                return res.status(400).send({ error: 'Incorrect login', status: 400 });
-            }
-            const setOtp = await userService.sendOtp(userData);
-            if (setOtp) {
-                return res.status(200).send({ message: `Your verification code is :${setOtp.otp}` });
-            }
-            return res.status(400).send({ error: 'Something went wrong!', status: 400 });
-        }
-        if (pathname.for == "submit-otp") {
-            if (isOtpVerify == true) {
-                const currentTime = new Date();
-                if (password != userData.otp) {
-                    return res.status(400).send({ error: 'Incorrect OTP', status: 400 });
-                }
-                if (currentTime > userData.otpExpireAt) {
-                    return res.status(400).send({ error: 'OTP timeout', status: 400 });
-                }
-                const updateUser = await userService.userUpdate(req.body, userData.id)
-                return res.status(201).send({ moreInfo: userData.isVerify === false ? true : false, user: updateUser });
-            } else {
-                const updateUser = await userService.userUpdate({...req.body,...{isVerify:true}}, userData.id)
-                return res.status(200).send(updateUser);
-            }
-        }
-        if (pathname.for == 'guest') {
-            const updateUser = await userService.guestLogin(userData)
-            return res.status(200).send(updateUser);
-        }
+exports.otp_request = asyncHandler(async(req,res) => {
+    try {
+        const data = await req.body
+        const userData = await userService.find_or_createUser(data);
+        const setOtp = await userService.sendOtp(userData);
+        return res.status(201).send(setOtp);
+    } catch (error) {
+        return res.status(400).send({error:'Incorrect login'});
     }
 })
+
+exports.otp_verify = asyncHandler(async(req,res) => {
+    try {
+        const data = await req.body
+        const userData = await userService.find_or_createUser(data);
+        const currentTime = new Date();
+        if (data.otp != parseInt(userData.otp,10)) {
+            return res.status(400).send({error: 'Incorrect OTP'});
+        }
+        if (currentTime > userData.otpExpireAt) {
+            return res.status(400).send({ error: 'OTP timeout'});
+        }
+        if(userData.isVerify == false){
+            return res.status(200).send(userData);
+        }
+        const updateUser = await userService.guestLogin(userData)
+        return res.status(200).send(updateUser);
+    } catch (error) {
+        return res.status(400).send({error:'Incorrect login'});
+    }
+})
+
+exports.update_information = asyncHandler(async (req, res) => {
+    try {
+        const userData = await userService.find_or_createUser(req.body);
+        const updateUser = await userService.userUpdate({...req.body, ...{ platform: "APPS_USER"}}, userData.id)
+        return res.status(200).send(updateUser);
+    } catch (error) {
+        return res.status(400).send({error:'Incorrect login'});
+    }
+})
+
+exports.guest_login = asyncHandler(async (req, res) => {
+    try {
+        const userData = await userService.find_or_createUser(req.body);
+        const updateUser = await userService.guestLogin(userData)
+        return res.status(200).send(updateUser);
+    } catch (error) {
+        return res.status(400).send({error:'Incorrect login'});
+    }  
+})
+
 exports.user_logout = asyncHandler(async(req, res) => {
     try {
         const info = await req.user;
@@ -56,7 +71,7 @@ exports.auth_me = asyncHandler(async(req,res) => {
    const info = await authService.userByToken(req.headers.authorization)
    const user = await userService.get_user({id:info.id})
    if(user){
-        return res.status(200).send({...user,...{name:user.firstName+' '+user.lastName}});
+        return res.status(200).send(info);
    }
     return res.status(401).send({status:false, message: 'Invalid User' });
 })

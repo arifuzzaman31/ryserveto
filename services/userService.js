@@ -57,8 +57,12 @@ const find_or_createUser = async (requestData) => {
       if(readyData.firstName && readyData.lastName){
         readyData = {...readyData,...{name:readyData.firstName+' '+readyData.lastName}}
       }
+      readyData = {...readyData,...{isVerify:true,otpExpireAt:null,status:true,otp:null}}
       if(["01412222221","01277744111"].includes(readyData.phoneNumber)){
         return readyData;
+      }
+      if(readyData.birthDate){
+        readyData = {...readyData,...{birthDate:new Date(readyData.birthDate)}}
       }
       const user = await prisma.user.update({
         where: {
@@ -75,13 +79,14 @@ const find_or_createUser = async (requestData) => {
       const user = await updateUserInfo(userData,userId)
       const dt = await authService.generateUserToken({...user,...{platform:userData.platform}})
       const tokenUser = {user, ...{token:dt}};
+      // return tokenUser
       await setSessionData(tokenUser)
       const createdDate = new Date(user.createdAt);
       const tday = new Date();
       if (createdDate.toDateString() === tday.toDateString()) {
           let phone_number = "88" + user.phoneNumber;
           let message = `Your account has been created Successfully, Thank You. \n\nRYSERVED`;
-          await helper.runSMSservice(encodeURI(message),phone_number)
+         await helper.runSMSservice(encodeURI(message),phone_number)
       }
       return tokenUser;
   }

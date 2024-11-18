@@ -9,7 +9,7 @@ exports.add_to_wishList = asyncHandler(async (req, res) => {
         data: {
           userId: req.user.id,
           type: data.type,
-          subAssetComponentId: data.subAssetComponentId,
+          propertyId: data.propertyId,
           status: data.status == "true" ? true : false,
         },
       });
@@ -24,7 +24,7 @@ exports.add_to_wishList = asyncHandler(async (req, res) => {
 });
 
 exports.get_all_wishList = asyncHandler(async (req, res) => {
-  const subassetComp = await prisma.subAssetComponent.findMany({
+  const property = await prisma.subAssetComponent.findMany({
     where: {
       wishLists: {
         some: {
@@ -33,27 +33,26 @@ exports.get_all_wishList = asyncHandler(async (req, res) => {
       },
     },
     include: {
-      asset: {
+      property: {
         select: {
           id: true,
-          propertyName: true,
-          city: true,
-          area: true,
-          geoTag: true,
-          country: true,
-          bookingCount: true,
+          listingName: true,
+          title: true,
+          subTitle: true,
+          logo: true,
+          images: true
         },
       },
     },
   });
-  return res.status(200).send(subassetComp);
+  return res.status(200).send(property);
 });
 
 exports.destroy_wishList = asyncHandler(async (req, res) => {
   const id = parseInt(req.params.id, 10);
   const wishList = await prisma.wishList.deleteMany({
     where: {
-      AND: [{ userId: req.user.id }, { subAssetComponentId: id }],
+      AND: [{ userId: req.user.id }, { propertyId: id }],
     },
   });
   return res.status(200).send(wishList);

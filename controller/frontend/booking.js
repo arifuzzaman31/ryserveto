@@ -5,23 +5,25 @@ const helper = require("../../helper/helper");
 exports.create_booking = asyncHandler(async (req, res) => {
   const data = await req.body;
   try {
-    const property = await prisma.property.findFirst({
+    const branch = await prisma.Branch.findFirst({
       where: {
-        id: data.id
+        id: data.branchId
       },
       include: {
         owner: {
           select: { id: true, phoneNumber: true },
+        },
+        property: {
+          select: { id: true, listingName: true },
         },
       },
     });
 
     const { id, name, phoneNumber } = await req.user;
     const bookingData = {
-      property: { connect: { id: property.id } },
-      branch: { connect: { id: property.subAssetId } },
-      table: { connect: { id: data.subAssetCompId } },
-      owner: { connect: { id: property.ownerId } },
+      property: { connect: { id: branch.propertyId } },
+      branch: { connect: { id: branch.id } },
+      owner: { connect: { id: branch.ownerId } },
       customer: { connect: { id: id } },
       customerName: name,
       phoneNumber: phoneNumber,
@@ -33,9 +35,9 @@ exports.create_booking = asyncHandler(async (req, res) => {
       vat: data.vat ?? 0,
       discount: data.discount ?? 0,
       grandTotal: data.grandTotal ?? 0,
-      customerRequest: data.customerReq ?? "",
+      customerRequest: data.customerReq,
       bookingType: data.bookingType ?? "Regular",
-      status: data.status ?? "ON_HOLD",
+      status: data.status ?? "ON_HOLD"
     };
     if (data.tableId) {
       bookingData.table = { connect: { id: data.tableId } };
@@ -49,12 +51,12 @@ exports.create_booking = asyncHandler(async (req, res) => {
       });
       if (booking) {
         let phone_number = "88" + req.user?.phoneNumber;
-        let message = `Your reservation is pending confirmation from ${property.listingName}.\nFor support, contact 01923283543`;
+        let message = `Your reservation is pending confirmation from ${branch.property?.listingName}.\nFor support, contact 01923283543`;
         if (process.env.SMS_TO_USER == 'true') {
           await helper.runSMSservice(encodeURI(message), phone_number);
         }
-        await prisma.Asset.update({
-          where: { id: property.assetId },
+        await prisma.Branch.update({
+          where: { id: booking.branchId },
           data: {
             bookingCount: {
               increment: 1,
@@ -79,47 +81,42 @@ exports.booking_list = asyncHandler(async (req, res) => {
     take: Number(to) ? Number(to) : 5,
     where: {
       customerId: req.user.id,
-      deleted: null,
+      deletedAt: null,
     },
     orderBy: {
       createdAt: "desc",
     },
-    include: {
-      asset: {
-        select: {
-          id: true,
-          propertyName: true,
-          city: true,
-          area: true,
-          geoTag: true,
-          country: true,
-        },
-      },
-      subAssetComponent: {
+    select:{
+      id:true,
+      propertyId:true,
+      branchId:true,
+      startDate:true,
+      slot:true,
+      guestNumber:true,
+      status:true,
+      property: {
         select: {
           id: true,
           listingName: true,
-          type: true,
-          reservationCategory: true,
-          image: true,
+          title: true,
+          subTitle: true,
+          logo: true,
+          images: true
         },
       },
-      table: {
+      branch: {
         select: {
           id: true,
-          capacity: true,
-          type: true,
-          size: true,
+          branchName: true,
+          images: true,
+          city: true,
+          area: true,
+          latitude: true,
+          longitude: true,
+          country: true,
         },
       },
-      seatBed: {
-        select: {
-          id: true,
-          type: true,
-          roomNo: true,
-        },
-      },
-    },
+    }
   });
   return res.status(200).send(bookings);
 });
@@ -131,7 +128,29 @@ exports.get_booking = asyncHandler(async (req, res) => {
       id: id,
     },
     include: {
-      table: true,
+      property: {
+        select: {
+          id: true,
+          listingName: true,
+          title: true,
+          subTitle: true,
+          logo: true,
+          images: true
+        },
+      },
+      branch:{
+        select:{
+          id:true,
+          branchName:true,
+          images: true,
+          city: true,
+          area: true,
+          latitude: true,
+          longitude: true,
+          country: true,
+          location: true,
+        }
+      }
     },
   });
   return res.status(200).send(booking);
@@ -199,10 +218,13 @@ exports.update_booking = asyncHandler(async (req, res) => {
 
 exports.delete_booking = asyncHandler(async (req, res) => {
   const id = parseInt(req.params.id, 10);
-  const booking = await prisma.Booking.delete({
+  const booking = await prisma.Booking.update({
     where: {
       id: id,
     },
+    data:{
+      deletedAt: now()
+    }
   });
   return res.status(200).send(booking);
 });

@@ -8,7 +8,7 @@ const generateUserToken = async (userData) => {
     platform: userData.platform == 'apps' ? 'APPS_USER' : userData.platform
   };
   if (["BUSINESS_MANAGER","LISTING_MANAGER"].includes(userData.userType)) {
-    payload.assetId = userData.roles?.assetId;
+    payload.branchId = userData.roles?.branchId;
   }
   if(["apps","APPS_USER"].includes(userData.platform)) {
     payload.email = userData.email
@@ -27,17 +27,15 @@ const userByToken = async (token) => {
   return info;
 }
 
-
-
 const permissionSetter = async (user) => {
   let permissions = null
   if ((user.userType == 'BUSINESS_OWNER') || (user.userType == 'CRM_EDITOR')) {
-    permissions = ['business-view', 'business-edit', 'business-delete', 'business-create',
-      'branch-view', 'branch-edit', 'branch-delete', 'branch-create',
-      'listing-view', 'listing-edit', 'listing-delete', 'listing-create',
-      'listingtype-view', 'listingtype-edit', 'listingtype-delete', 'listingtype-create',
-      'reservation-view', 'reservation-create', 'reservation-edit', 'reservation-delete',
-      'employee-view', 'report-view', 'revenue-report', 'upcoming-report', 'complete-report', 'cancel-report']
+    permissions = ['property-create', 'property-view', 'property-edit', 'property-delete',
+  'branch-create', 'branch-view', 'branch-edit', 'branch-delete',
+  'reservation-view', 'reservation-create', 'reservation-edit', 'reservation-delete',
+  'report-view', 'revenue-report', 'upcoming-report', 'complete-report', 'cancel-report',
+  'role-create', 'role-view', 'role-edit', 'role-delete',
+  'employee-create', 'employee-view', 'employee-edit', 'employee-delete']
     if (user.userType == 'CRM_EDITOR') permissions.push('amenities-view', 'partner-view', 'cuisine-view')
     user.roles = { permissions }
   }
