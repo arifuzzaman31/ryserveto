@@ -207,3 +207,20 @@ exports.delete_property = asyncHandler(async (req, res) => {
   });
   return res.status(200).send(property);
 });
+
+exports.property_signature = asyncHandler(async(req,res) => {
+  try {
+    const data = await req.body;
+    const property = await prisma.Property.update({
+      where: {
+        id:{ in: data.ids }
+      },
+      data: {
+        sectSymb: data.signature
+      },
+    });
+    return res.status(200).send({message:'Data add to section'});
+  } catch (error) {
+    return res.status(400).send(error.message);
+  }
+});

@@ -67,6 +67,10 @@ routes
   .delete(property_controller.delete_property);
 
 routes
+  .route("/signature-to-property")
+  .post(property_controller.property_signature)
+
+routes
   .route("/branch").all(adminMiddleware)
   .get(branch_controller.branch_list)
   .post(branch_controller.create_branch);
