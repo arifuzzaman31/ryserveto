@@ -177,7 +177,7 @@ exports.property_update = asyncHandler(async (req, res) => {
     delete prepareData["table"];
     delete prepareData["createdAt"];
     delete prepareData["updatedAt"];
-    delete prepareData["deleted"];
+    delete prepareData["deletedAt"];
     const result = await prisma.$transaction(async (prisma) => {
       const property = await prisma.Property.update({
         where: {
@@ -211,16 +211,17 @@ exports.delete_property = asyncHandler(async (req, res) => {
 exports.property_signature = asyncHandler(async(req,res) => {
   try {
     const data = await req.body;
-    const property = await prisma.Property.update({
+    const property = await prisma.Property.updateMany({
       where: {
-        id:{ in: data.ids }
+        id: { in: data.ids }
       },
       data: {
         sectSymb: data.signature
       },
     });
-    return res.status(200).send({message:'Data add to section'});
+    return res.status(200).send(property);
+
   } catch (error) {
-    return res.status(400).send(error.message);
+    return res.status(500).send({ details: error.message });
   }
 });

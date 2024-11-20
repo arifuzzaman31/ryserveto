@@ -68,7 +68,7 @@ routes
 
 routes
   .route("/signature-to-property")
-  .post(property_controller.property_signature)
+  .put(property_controller.property_signature)
 
 routes
   .route("/branch").all(adminMiddleware)
