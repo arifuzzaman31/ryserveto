@@ -4,6 +4,7 @@ const prisma = require("../../lib/db/prisma");
 exports.home_list = asyncHandler(async (req, res) => {
     const { perPage,pageNo,group } = await req.query
     let orderBy = {
+        precedency: "asc"
     };
     let where = {
         group: group,

@@ -1,7 +1,7 @@
 {
   "name": "tenant",
   "version": "1.0.0",
-  "description": "create a project\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[Dmultitenancy project",
+  "description": "create a project multitenancy project",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
