@@ -41,6 +41,33 @@ exports.property_list = asyncHandler(async(req,res) => {
   });
 });
 
+exports.search_list = asyncHandler(async(req,res) => {
+    const {pageNo,perPage,signature,group,type } = req.query;
+    const grp = req.params.group;
+    let data;
+
+    switch (grp.toUpperCase()) {
+      case "HOTEL":
+
+        break;
+      case "RESTAURANT":
+            data =  getProperty('RESTAURANT',req.query)
+        break;
+      case "SERVICE_APARTMENT":
+        
+        break;
+      case "MOVIE_THEATER":
+        
+        break;
+      case "SPA":
+        
+        break;
+      default:
+        break;
+    }
+    return res.status(200).send(data)
+});
+
 exports.get_property = asyncHandler(async(req,res) => {
   const id = parseInt(req.params.id, 10);
   const property = await prisma.Property.findFirst({
@@ -105,3 +132,48 @@ exports.property_food = asyncHandler(async(req,res) => {
   });
   return res.status(200).send(property_food);
 });
+
+async function getProperty(tp,query){
+  const {pageNo,perPage,signature,group,type,cuisine } = query;
+  let where = {};
+  if(cuisine){
+      const cuisine_arr = cuisine.split('_')
+      where.cuisines = {some:cuisine_arr}
+    }
+    return where
+    if(signature){where.sectSymb = parseInt(signature,10)}
+    if(type){ where.type = group }
+    const perPg = perPage ? Number(perPage) : 10;
+    const from = Number(pageNo * perPg) - Number(perPg);
+
+  const [count, property] = await prisma.$transaction([
+    prisma.Property.count({ where }),
+    prisma.Property.findMany({
+      skip: pageNo ? from : 0,
+      take: perPg,
+      where,
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        ownerId: true,
+        type: true,
+        listingName: true,
+        logo: true,
+        images: true,
+        reservationCategory: true,
+        // branches: true,
+        status: true
+        // tables: true
+      },
+    }),
+  ]);
+
+  return {
+    pagination: {
+      total: Math.ceil(count / perPg),
+    },
+    data: property,
+  };
+}
