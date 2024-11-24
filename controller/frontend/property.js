@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const prisma = require("../../lib/db/prisma");
 
 exports.property_list = asyncHandler(async(req,res) => {
-    const {pageNo,perPage,signature,group,type } = await req.query;
+    const {pageNo,perPage,signature,group,type } = req.query;
     let where = {};
     if(signature){where.sectSymb = parseInt(signature,10)}
     if(type){ where.type = group }
@@ -103,7 +103,7 @@ exports.get_property = asyncHandler(async(req,res) => {
 });
 
 exports.property_food = asyncHandler(async(req,res) => {
-  const {group} = await req.query;
+  const {group} = req.query;
   const id = parseInt(req.params.id, 10);
   const property_food = await prisma.Property.findFirst({
     where: {
