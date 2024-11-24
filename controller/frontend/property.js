@@ -51,7 +51,7 @@ exports.search_list = asyncHandler(async(req,res) => {
 
         break;
       case "RESTAURANT":
-            data =  getProperty('RESTAURANT',req.query)
+            data = await getProperty('RESTAURANT',req.query)
         break;
       case "SERVICE_APARTMENT":
         
@@ -134,15 +134,20 @@ exports.property_food = asyncHandler(async(req,res) => {
 });
 
 async function getProperty(tp,query){
-  const {pageNo,perPage,signature,group,type,cuisine } = query;
+  const {pageNo,perPage,date,group,seating,cuisine } = query;
   let where = {};
-  if(cuisine){
+    if(cuisine){
       const cuisine_arr = cuisine.split('_')
-      where.cuisines = {some:cuisine_arr}
+      where.cuisines = {hasSome:cuisine_arr}
     }
-    return where
-    if(signature){where.sectSymb = parseInt(signature,10)}
-    if(type){ where.type = group }
+    // if(date){
+    //   where.booking = {startDate: {where : {not : new Date(date)}}}
+    // }
+    if(seating){
+      where.tables = {position:{some : seating}}
+    }
+    // return where
+    // if(type){ where.type = group }
     const perPg = perPage ? Number(perPage) : 10;
     const from = Number(pageNo * perPg) - Number(perPg);
 
@@ -164,8 +169,8 @@ async function getProperty(tp,query){
         images: true,
         reservationCategory: true,
         // branches: true,
-        status: true
-        // tables: true
+        status: true,
+        tables:{ select : {id:true,position:true,capacity:true}}
       },
     }),
   ]);

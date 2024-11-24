@@ -4,11 +4,12 @@ const ownerService = require("../../services/ownerService");
 const helper = require("../../helper/helper");
 
 exports.create_branch = asyncHandler(async (req, res) => {
-  const data = await req.body;
+  const data = req.body;
   try {
     const result = await prisma.$transaction(async (prisma) => {
       const ownerId = await ownerService.propertyBy(req.user);
-      let amenity = amenities?.map(itm => itm.name)
+      let amenity = data.amenities?.map(itm => itm.name)
+      // return res.status(200).send(amenity);
       const branch = await prisma.branch.create({
         data: {
           branchName: data.branchName,
