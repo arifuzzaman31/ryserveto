@@ -42,10 +42,8 @@ exports.property_list = asyncHandler(async(req,res) => {
 });
 
 exports.search_list = asyncHandler(async(req,res) => {
-    const {pageNo,perPage,signature,group,type } = req.query;
     const grp = req.params.group;
     let data;
-
     switch (grp.toUpperCase()) {
       case "HOTEL":
 
@@ -82,10 +80,40 @@ exports.get_property = asyncHandler(async(req,res) => {
       subTitle:true,
       logo:true,
       cuisines:true,
+      slot:true,
       status:true,
       branches: {
-        include:{
-          tables:true
+        select:{
+          id:true,
+          propertyId:true,
+          branchName:true,
+          images:true,
+          description:true,
+          level:true,
+          terms:true,
+          city:true,
+          area:true,
+          country:true,
+          amenities:true,
+          latitude:true,
+          longitude:true,
+          location:true,
+          address:true,
+          status:true,
+          longitude:true,
+          tables:{
+            select:{
+              id:true,
+              branchId:true,
+              type:true,
+              capacity:true,
+              position:true,
+              size:true,
+              image:true,
+              ryservable:true,
+              status:true
+            }
+          }
         }
       },
       food: { 
@@ -135,20 +163,27 @@ exports.property_food = asyncHandler(async(req,res) => {
 
 async function getProperty(tp,query){
   const {pageNo,perPage,date,position,seating,cuisine } = query;
+  // query.map();
   let where = {};
-    if(cuisine){
-      const cuisine_arr = cuisine.split('_')
-      where.cuisines = {hasSome:cuisine_arr}
+    if (cuisine) {
+      const cuisine_arr = cuisine.split('_');
+      where.cuisines = { hasSome: cuisine_arr };
     }
-    // if(date){
-    //   where.booking = {startDate: {where : {not : new Date(date)}}}
+    let orConditions = [];
+    if (position) {
+      let pos = parseInt(position,10);
+      orConditions.push({position:pos});
+      where.OR = orConditions;
+    }
+    if (seating) {
+      orConditions.push({ tables: { some: { capacity: {gte:Number(seating)} } } });
+      where.OR = orConditions;
+    }
+
+    // if (orConditions.length > 0) {
+    //   where.OR = orConditions;
     // }
-    if(position){ where.position = position }
-    if(seating){
-      where.tables = {position:{some : seating}}
-    }
     // return where
-    // if(type){ where.type = group }
     const perPg = perPage ? Number(perPage) : 10;
     const from = Number(pageNo * perPg) - Number(perPg);
 
@@ -168,6 +203,7 @@ async function getProperty(tp,query){
         listingName: true,
         logo: true,
         images: true,
+        position: true,
         reservationCategory: true,
         // branches: true,
         status: true,
