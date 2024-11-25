@@ -147,7 +147,7 @@ async function getProperty(tp,query){
     if(seating){
       where.tables = {position:{some : seating}}
     }
-    return where
+    // return where
     // if(type){ where.type = group }
     const perPg = perPage ? Number(perPage) : 10;
     const from = Number(pageNo * perPg) - Number(perPg);
