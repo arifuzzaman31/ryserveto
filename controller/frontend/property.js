@@ -134,7 +134,7 @@ exports.property_food = asyncHandler(async(req,res) => {
 });
 
 async function getProperty(tp,query){
-  const {pageNo,perPage,date,group,seating,cuisine } = query;
+  const {pageNo,perPage,date,position,seating,cuisine } = query;
   let where = {};
     if(cuisine){
       const cuisine_arr = cuisine.split('_')
@@ -143,10 +143,11 @@ async function getProperty(tp,query){
     // if(date){
     //   where.booking = {startDate: {where : {not : new Date(date)}}}
     // }
+    if(position){ where.position = position }
     if(seating){
       where.tables = {position:{some : seating}}
     }
-    // return where
+    return where
     // if(type){ where.type = group }
     const perPg = perPage ? Number(perPage) : 10;
     const from = Number(pageNo * perPg) - Number(perPg);

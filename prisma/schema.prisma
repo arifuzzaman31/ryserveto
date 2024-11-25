@@ -138,6 +138,7 @@ model Property {
   event               Events[]
   sectSymb            Int?
   priority            Int?
+  position            Int               @default(1)
   optionalData        Json?
   eventStatus         Boolean           @default(false)
   status              Boolean           @default(true)
