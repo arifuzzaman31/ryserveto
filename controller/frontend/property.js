@@ -43,7 +43,7 @@ exports.property_list = asyncHandler(async(req,res) => {
 
 exports.search_list = asyncHandler(async(req,res) => {
     const grp = req.params.group;
-    let data;
+    let data = null;
     switch (grp.toUpperCase()) {
       case "HOTEL":
 
@@ -167,32 +167,13 @@ exports.property_food = asyncHandler(async(req,res) => {
 });
 
 async function getProperty(tp,query){
-  const {pageNo,perPage,date,position,seating,cuisine } = query;
-  // query.map();
-  let where = {};
-    if (cuisine) {
-      const cuisine_arr = cuisine.split('_');
-      where.cuisines = { hasSome: cuisine_arr };
-    }
-    let orConditions = [];
-    if (position) {
-      let pos = parseInt(position,10);
-      orConditions.push({position:pos});
-      where.OR = orConditions;
-    }
-    if (seating) {
-      orConditions.push({ tables: { some: { capacity: {gte:Number(seating)} } } });
-      where.OR = orConditions;
-    }
-
-    // if (orConditions.length > 0) {
-    //   where.OR = orConditions;
-    // }
-    // return where
+  const {pageNo,perPage } = query;
+    let where = await whereMaker(query)
+    // return where;
     const perPg = perPage ? Number(perPage) : 10;
     const from = Number(pageNo * perPg) - Number(perPg);
 
-  const [count, property] = await prisma.$transaction([
+  const [count,property] = await prisma.$transaction([
     prisma.Property.count({ where }),
     prisma.Property.findMany({
       skip: pageNo ? from : 0,
@@ -212,15 +193,53 @@ async function getProperty(tp,query){
         reservationCategory: true,
         // branches: true,
         status: true,
-        tables:{ select : {id:true,position:true,capacity:true}}
+        tables:{ select : {id:true,position:true,capacity:true}},
+        booking:{ select : {id:true,startDate:true,slot:true}}
       },
     }),
   ]);
-
+  
   return {
     pagination: {
       total: Math.ceil(count / perPg),
     },
     data: property,
   };
+}
+
+async function whereMaker(query) {
+  const {date,position,seating,cuisine } = query;
+  let where = {};
+    if (cuisine) {
+      const cuisine_arr = cuisine.split('_');
+      where.cuisines = { hasSome: cuisine_arr };
+    }
+    let orConditions = [];
+    if (position) {
+      let pos = parseInt(position,10);
+      if(where.length > 0){
+        orConditions.push({position:pos});
+        where.OR = orConditions;
+      } else {
+        where.position = pos
+      } 
+    }
+    if (seating) {
+      if(where.length > 0){
+        orConditions.push({ tables: { some: { position: seating } } });
+        where.OR = orConditions;
+      } else {
+        where.tables = { some: { position: seating } }
+      }
+    }
+
+    if (date) {
+      if(where.length > 0){
+        orConditions.push({booking:{none: {startDate: new Date(date)}}});
+        where.OR = orConditions;
+      } else {
+        where.booking = {none: {startDate: new Date(date)}}
+      }
+    }
+    return where
 }
