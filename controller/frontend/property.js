@@ -81,6 +81,11 @@ exports.get_property = asyncHandler(async(req,res) => {
       logo:true,
       cuisines:true,
       slot:true,
+      images:true,
+      description:true,
+      terms:true,
+      offday:true,
+      position:true,
       status:true,
       branches: {
         select:{
