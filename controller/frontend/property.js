@@ -249,21 +249,19 @@ exports.branch_list_property = asyncHandler(async (req, res) => {
   }
   let orConditions = [];
   if (signature) {
-    if(where.length > 0){
-      orConditions.property.push({is:{sectSymb : signature}});
-    } else {
-      where.property = {is: {sectSymb : signature}};
-    }
+    orConditions.push({ property: { is: { sectSymb: Number(signature) } } });
   }
+  
   if (group) {
-    if(where.length > 0){
-      orConditions.property.push({type : group});
+    orConditions.push({ property: { type: group } });
+  }
+  if (orConditions.length > 0) {
+    if(!area && (group && signature)){
+      where.AND = orConditions
     } else {
-      where.property = {type : group};
+      where.OR = orConditions;
     }
   }
-  if(orConditions.length > 0) where.OR = orConditions
-  return res.status(200).send(where)
   const from = Number(pageNo * perPage) - Number(perPage);
   const [count, branches] = await prisma.$transaction([
     prisma.branch.count({ where }),
