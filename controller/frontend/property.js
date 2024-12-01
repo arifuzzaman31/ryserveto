@@ -60,7 +60,11 @@ exports.search_list = asyncHandler(async (req, res) => {
       break;
     case "SPA":
       break;
+    case "BY-BRANCH":
+      data = await getBranchByProperty("RESTAURANT", req.query);
+      break;
     default:
+      data = { status: false, message: "No Data Found!" };
       break;
   }
   return res.status(200).send(data);
@@ -135,6 +139,75 @@ exports.get_property = asyncHandler(async (req, res) => {
   return res.status(200).send(property);
 });
 
+exports.get_branch_property = asyncHandler(async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  const property = await prisma.Branch.findFirst({
+    where: {
+      id: id,
+    },
+    select: {
+      id: true,
+      propertyId: true,
+      branchName: true,
+      images: true,
+      description: true,
+      level: true,
+      terms: true,
+      city: true,
+      area: true,
+      country: true,
+      amenities: true,
+      latitude: true,
+      longitude: true,
+      location: true,
+      address: true,
+      status: true,
+      longitude: true,
+      property: {
+        select: {
+          id: true,
+          type: true,
+          listingName: true,
+          title: true,
+          subTitle: true,
+          logo: true,
+          cuisines: true,
+          slot: true,
+          images: true,
+          description: true,
+          terms: true,
+          offday: true,
+          position: true,
+          status: true,
+          food: {
+            select: {
+              id: true,
+              name: true,
+              images: true,
+              propertyId: true,
+              status: true,
+            },
+          },
+        },
+      },
+      tables: {
+        select: {
+          id: true,
+          branchId: true,
+          type: true,
+          capacity: true,
+          position: true,
+          size: true,
+          image: true,
+          ryservable: true,
+          status: true,
+        },
+      },
+    },
+  });
+  return res.status(200).send(property);
+});
+
 exports.branch_property = asyncHandler(async (req, res) => {
   const id = parseInt(req.params.id, 10);
   const property = await prisma.branch.findFirst({
@@ -196,7 +269,7 @@ exports.branch_property = asyncHandler(async (req, res) => {
               propertyId: true,
               status: true,
             },
-          }
+          },
         },
       },
     },
@@ -241,27 +314,31 @@ exports.branch_list_property = asyncHandler(async (req, res) => {
   const pageNo = parseInt(req.query.pageNo) || 1;
   const perPage = parseInt(req.query.perPage) || 15;
   let where = {};
-  if (area) {
-    where.area = {
-      contains: area,
-      mode: "insensitive",
-    };
-  }
+  // if (area) {
+  //   where.OR = {area: {
+  //     contains: area,
+  //     mode: "insensitive",
+  //   }};
+  // }
   let orConditions = [];
   if (signature) {
     orConditions.push({ property: { is: { sectSymb: Number(signature) } } });
   }
-  
+
+  if (area) {
+    orConditions.push({ area: { contains: area, mode: "insensitive" } });
+  }
   if (group) {
     orConditions.push({ property: { type: group } });
   }
   if (orConditions.length > 0) {
-    if(!area && (group && signature)){
-      where.AND = orConditions
+    if (!area && group && signature) {
+      where.AND = orConditions;
     } else {
       where.OR = orConditions;
     }
   }
+  // return res.status(200).send({where})
   const from = Number(pageNo * perPage) - Number(perPage);
   const [count, branches] = await prisma.$transaction([
     prisma.branch.count({ where }),
@@ -311,7 +388,7 @@ exports.branch_list_property = asyncHandler(async (req, res) => {
 async function getProperty(tp, query) {
   const { pageNo, perPage } = query;
   let where = await whereMaker(query);
-  // return where;
+  // return {where};
   const perPg = perPage ? Number(perPage) : 10;
   const from = Number(pageNo * perPg) - Number(perPg);
 
@@ -347,6 +424,102 @@ async function getProperty(tp, query) {
     },
     data: property,
   };
+}
+
+async function getBranchByProperty(tp, query) {
+  const { pageNo, perPage } = query;
+  let where = await whereBranchMaker(query);
+  // return {where};
+  const perPg = perPage ? Number(perPage) : 10;
+  const from = Number(pageNo * perPg) - Number(perPg);
+
+  const [count, branches] = await prisma.$transaction([
+    prisma.branch.count({ where }),
+    prisma.branch.findMany({
+      skip: Number(pageNo) ? from : 0,
+      take: Number(perPg),
+      where,
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        branchName: true,
+        propertyId: true,
+        images: true,
+        level: true,
+        city: true,
+        area: true,
+        longitude: true,
+        latitude: true,
+        status: true,
+        property: {
+          select: {
+            id: true,
+            type: true,
+            listingName: true,
+            logo: true,
+            images: true,
+            cuisines: true,
+            reservationCategory: true,
+            sectSymb: true,
+            status: true,
+          },
+        },
+        tables: {
+          select: {
+            id: true,
+            branchId: true,
+            propertyId: true,
+            capacity: true,
+            position: true,
+            status: true,
+          },
+        },
+        booking: {
+          select: {
+            id: true,
+            branchId: true,
+            propertyId: true,
+            startDate: true,
+            endDate: true,
+            slot: true,
+            status: true,
+          },
+        },
+      },
+    }),
+  ]);
+  return {
+    pagination: {
+      total: Math.ceil(count / perPg),
+    },
+    data: branches,
+  };
+}
+
+async function whereBranchMaker(query) {
+  const { date, position, seating, cuisine } = query;
+  let where = {};
+  let orConditions = [];
+  if (position) {
+    let pos = parseInt(position, 10);
+    orConditions.push({ property: { position: pos } });
+  }
+  if (cuisine) {
+    const cuisine_arr = cuisine.split("_");
+    orConditions.push({ property: { cuisines: { hasSome: cuisine_arr } } });
+  }
+  if (seating) {
+    orConditions.push({ tables: { some: { position: seating } } });
+  }
+  if (date) {
+    orConditions.push({ booking: { none: { startDate: new Date(date) } } });
+  }
+  if (orConditions.length > 0) {
+    where.OR = orConditions;
+  }
+  return where;
 }
 
 async function whereMaker(query) {
