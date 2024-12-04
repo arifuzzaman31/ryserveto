@@ -3,6 +3,7 @@ const routes = express.Router();
 const userauth_controller = require("../controller/frontend/auth");
 const booking_controller = require("../controller/frontend/booking");
 const wishlist_controller = require("../controller/frontend/wishList");
+const util_controller = require("../controller/backend/utility")
 const adminMiddleware = require("../middleware/adminMiddleware");
 
 routes.post("/auth/otp/request", userauth_controller.otp_request);
@@ -14,6 +15,9 @@ routes.get("/me",adminMiddleware, userauth_controller.auth_me);
 routes.put("/user/:id",userauth_controller.update_me);
 routes.delete("/user",userauth_controller.delete_account);
 routes.get("/terms-condition", userauth_controller.terms_condition);
+
+routes.post("/test-mail", util_controller.sendtestmail);
+
 routes
     .route("/booking")
     .all(adminMiddleware)

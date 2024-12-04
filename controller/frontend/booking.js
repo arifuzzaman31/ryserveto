@@ -3,7 +3,7 @@ const prisma = require("../../lib/db/prisma");
 const helper = require("../../helper/helper");
 
 exports.create_booking = asyncHandler(async (req, res) => {
-  const data = await req.body;
+  const data = req.body;
   try {
     const branch = await prisma.Branch.findFirst({
       where: {
@@ -19,7 +19,7 @@ exports.create_booking = asyncHandler(async (req, res) => {
       },
     });
 
-    const { id, name, phoneNumber } = await req.user;
+    const { id, name, phoneNumber } = req.user;
     const bookingData = {
       property: { connect: { id: branch.propertyId } },
       branch: { connect: { id: branch.id } },
@@ -123,7 +123,7 @@ exports.booking_list = asyncHandler(async (req, res) => {
 
 exports.get_booking = asyncHandler(async (req, res) => {
   const id = parseInt(req.params.id, 10);
-  const booking = await prisma.Booking.findMany({
+  const booking = prisma.Booking.findMany({
     where: {
       id: id,
     },
@@ -158,7 +158,7 @@ exports.get_booking = asyncHandler(async (req, res) => {
 
 exports.update_booking = asyncHandler(async (req, res) => {
   try {
-    const data = await req.body;
+    const data = req.body;
     const id = parseInt(req.params.id, 10);
     const prevasset = await prisma.Booking.findFirst({
       where: {

@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const prisma = require("../../lib/db/prisma");
 const ExcelJS = require('exceljs');
 const { slugify } = require("../../helper/helper");
+const { sendEmail } = require("../../services/emailService");
 
 exports.upload_property = asyncHandler(async (req, res) => {
     try {
@@ -94,3 +95,15 @@ exports.section_list = asyncHandler(async(req,res) => {
     await prisma.$disconnect();
   }
 })
+
+exports.sendtestmail = asyncHandler(async(req,res) => {
+  const details = {
+    email: 'arif.zaman@webable.digital',
+    subject: 'Welcome! You will be vanished',
+    username: 'Modusudon',
+    date: new Date(),
+    address: "Level 9, Road 4, Gulshan 1, Dhaka"
+  };
+  const data = await sendEmail(details);
+  return res.status(200).send(data);
+});

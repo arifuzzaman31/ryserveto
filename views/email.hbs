@@ -1,58 +1,82 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 20px;
-    }
-    .container {
-      max-width: 600px;
-      background-color: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      margin: 0 auto;
-      padding: 20px;
-    }
-    .header {
-      text-align: center;
-      background-color: #007bff;
-      color: #ffffff;
-      padding: 10px;
-      border-radius: 8px 8px 0 0;
-    }
-    .content {
-      margin: 20px 0;
-    }
-    .footer {
-      text-align: center;
-      font-size: 12px;
-      color: #888;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .body {
+            padding: 20px;
+        }
+        .body p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin: 0 0 10px;
+        }
+        .body .details {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #f1f1f1;
+            font-size: 14px;
+        }
+        .footer a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h2>Welcome to Ryserved</h2>
+    <div class="email-container">
+        <div class="header">
+            <h1>Reservation Confirmed</h1>
+        </div>
+        <div class="body">
+            <p>Dear {{username}},</p>
+            <p>We are excited to confirm your reservation! Below are the details:</p>
+            <div class="details">
+                <p><strong>Reservation Number:</strong> #12345</p>
+                <p><strong>Date:</strong> {{ date }}</p>
+                <p><strong>Time:</strong> 8PM</p>
+                <p><strong>Location:</strong> {{address}}</p>
+            </div>
+            <p>If you have any questions or need to make changes, feel free to contact us.</p>
+        </div>
+        <div class="footer">
+            <p>Thank you for choosing us!</p>
+            <p><a href="https://ryserved.com">Visit our website</a> for more information.</p>
+        </div>
     </div>
-    <div class="content">
-      <p>Hi {{name}},</p>
-      <p>We're excited to have you join us at {{company}}. Here's a quick overview of what you can expect:</p>
-      <ul>
-        <li>Top-notch support</li>
-        <li>Exclusive content</li>
-        <li>Personalized recommendations</li>
-      </ul>
-      <p>Feel free to reach out with any questions or feedback.</p>
-      <p>Best regards,</p>
-      <p>The {{company}} Team</p>
-    </div>
-    <div class="footer">
-      <p>&copy; {{year}} {{company}}. All rights reserved.</p>
-    </div>
-  </div>
 </body>
 </html>

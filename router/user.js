@@ -13,6 +13,7 @@ routes.get("/branch-property/:id", property_controller.branch_property);//get pr
 routes.get("/cuisine", cuisine_controller.cuisine_list);
 routes.get("/home-page", home_controller.home_list);
 routes.get("/:group/search", property_controller.search_list);
+
 routes.get("/check-cd", async(req,res) => {
       return res.status(200).send("Hello Bello");
 });
