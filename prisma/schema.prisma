@@ -472,5 +472,6 @@ enum BusinessCategory {
   SERVICE_APARTMENT
   MOVIE_THEATER
   SPA
+  EVENT
   OTHERS
 }
