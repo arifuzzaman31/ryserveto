@@ -70,6 +70,7 @@ model User {
   nid              Int?
   tin              String?
   booking          Booking[]
+  evtBooking       Evbooking[]
   password         String?
   otp              Int?
   otpExpireAt      DateTime?
@@ -285,12 +286,20 @@ model Events {
   property    Property    @relation(fields: [propertyId], references: [id])
   branchId    Int?
   branch      Branch?     @relation(fields: [branchId], references: [id])
+  evtName     String
+  slug        String?
+  title       String?
+  subtitle    String?
   location    String?
   mapLocation String?
   address     String?
+  images      Json?
   capacity    Int         @default(10)
   startDate   DateTime
   endDate     DateTime?
+  optionalData  Json?
+  rules       String?
+  description  String?
   status      Boolean     @default(true)
   evbooking   Evbooking[]
   deletedAt   DateTime?
@@ -377,7 +386,9 @@ model Cuisine {
 }
 
 model Evbooking {
-  id           Int           @id @default(autoincrement())
+  id           Int          @id @default(autoincrement())
+  customerId   Int
+  customer     User         @relation(fields: [customerId], references: [id])
   username     String
   phoneNumber  String
   email        String?
