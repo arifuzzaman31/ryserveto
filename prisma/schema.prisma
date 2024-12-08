@@ -297,6 +297,8 @@ model Events {
   capacity    Int         @default(10)
   startDate   DateTime
   endDate     DateTime?
+  longitude   String?
+  latitude    String?
   optionalData  Json?
   rules       String?
   description  String?
@@ -464,6 +466,7 @@ enum Category {
   TABLE
   TICKET
   APPOINTMENT
+  OTHERS
 }
 
 enum BusinessCategory {
@@ -472,6 +475,6 @@ enum BusinessCategory {
   SERVICE_APARTMENT
   MOVIE_THEATER
   SPA
-  EVENT
+  EVENTS
   OTHERS
 }

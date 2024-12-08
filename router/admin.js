@@ -11,6 +11,7 @@ const role_controller = require("../controller/backend/role");
 const category_controller = require("../controller/backend/category");
 const food_controller = require("../controller/backend/food");
 const util_controller = require("../controller/backend/utility");
+const event_controller = require("../controller/backend/event");
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 // const booking_controller = require("../controller/backend/booking");
@@ -65,6 +66,16 @@ routes
   .get(property_controller.get_property)
   .put(property_controller.property_update)
   .delete(property_controller.delete_property);
+
+routes
+  .route("/event").all(adminMiddleware)
+  .get(event_controller.event_list)
+  .post(event_controller.create_event);
+// routes
+//   .route("/event/:id").all(adminMiddleware)
+//   .get(event_controller.get_property)
+//   .put(event_controller.property_update)
+//   .delete(event_controller.delete_property);
 
 routes
   .route("/signature-to-property")

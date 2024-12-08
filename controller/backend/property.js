@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const prisma = require("../../lib/db/prisma");
 const ownerService = require("../../services/ownerService");
+const helper = require("../../helper/helper");
 
 exports.create_property = asyncHandler(async (req, res) => {
   const data = await req.body;
@@ -13,6 +14,7 @@ exports.create_property = asyncHandler(async (req, res) => {
           owner: { connect: { id: ownerId } },
           type: data.type,
           listingName: data.listingName,
+          slug: helper.slugify(data.listingName),
           title: data.title,
           subTitle: data.subTitle,
           logo: data.logo,
