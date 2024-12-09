@@ -2,12 +2,12 @@ const asyncHandler = require("express-async-handler");
 const prisma = require("../../lib/db/prisma");
 
 exports.property_list = asyncHandler(async (req, res) => {
-  const { pageNo, perPage, signature, group, type } = req.query;
+  const { pageNo, perPage, signature, group } = req.query;
   let where = {};
   if (signature) {
     where.sectSymb = parseInt(signature, 10);
   }
-  if (type) {
+  if (group) {
     where.type = group;
   }
   const perPg = perPage ? Number(perPage) : 10;

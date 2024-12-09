@@ -71,11 +71,11 @@ routes
   .route("/event").all(adminMiddleware)
   .get(event_controller.event_list)
   .post(event_controller.create_event);
-// routes
-//   .route("/event/:id").all(adminMiddleware)
-//   .get(event_controller.get_property)
-//   .put(event_controller.property_update)
-//   .delete(event_controller.delete_property);
+routes
+  .route("/event/:id").all(adminMiddleware)
+  .get(event_controller.get_event)
+  .put(event_controller.event_update)
+  .delete(event_controller.delete_event);
 
 routes
   .route("/signature-to-property")
