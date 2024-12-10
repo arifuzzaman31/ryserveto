@@ -293,7 +293,8 @@ exports.delete_booking = asyncHandler(async (req, res) => {
       id: id,
     },
     data: {
-      deleted: new Date(),
+      deleteAt: new Date(),
+      updatedBy: req.user?.id
     },
   });
   return res.status(200).send(booking);

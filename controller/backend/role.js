@@ -71,6 +71,8 @@ exports.update_role = asyncHandler(async (req, res) => {
           roleName: data.roleName,
           permissions: data.permissions,
           status: data.status == "true" ? true : false,
+          updatedAt:new Date(),
+          updatedBy: req.user?.id
         },
       });
       return roles;
@@ -101,6 +103,7 @@ exports.delete_role = asyncHandler(async (req, res) => {
     },
     data: {
       deletedAt: new Date(),
+      updatedBy: req.user?.id
     },
   });
   return res.status(200).send(roles);

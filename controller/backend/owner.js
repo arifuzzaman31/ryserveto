@@ -129,6 +129,8 @@ exports.emp_update = asyncHandler(async (req, res, next) => {
           roleId: data.roleId,
           ownerId: data.ownerId,
           status: data.status == "true" ? true : false,
+          updatedAt:new Date(),
+          updatedBy: req.user?.id
         },
       });
       return employee;
@@ -149,7 +151,8 @@ exports.delete_emp = asyncHandler(async (req, res, next) => {
         id: id,
       },
       data: {
-        deleted: new Date(),
+        deletedAt: new Date(),
+        updatedBy: req.user?.id
       },
     });
     return res.status(200).send(employee);

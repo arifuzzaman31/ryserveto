@@ -50,6 +50,8 @@ exports.update_cuisine = asyncHandler(async (req, res) => {
         data: {
           name: data.name,
           status: data.status == "true" ? true : false,
+          updatedAt:new Date(),
+          updatedBy: req.user?.id
         },
       });
       return cuisine;
@@ -84,7 +86,8 @@ exports.delete_cuisine = asyncHandler(async (req, res) => {
         id: id,
       },
       data: {
-        deleted: new Date(),
+        deletedAt: new Date(),
+        updatedBy: req.user?.id
       },
     });
     return res.status(200).send(cuisine);

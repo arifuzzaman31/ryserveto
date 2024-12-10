@@ -54,6 +54,8 @@ exports.update_amenity = asyncHandler(async (req, res) => {
           icon: data.icon,
           price: Number(data.price),
           status: data.status == "true" ? true : false,
+          updatedBy: req.user?.id,
+          updatedAt:new Date()
         },
       });
       return amenity
@@ -89,7 +91,8 @@ exports.delete_amenity = asyncHandler(async (req, res) => {
           id: id,
         },
         data: {
-          deleted: new Date(),
+          deletedAt: new Date(),
+          updatedBy: req.user?.id
         },
       });
       return amenities;

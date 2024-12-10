@@ -28,6 +28,14 @@ exports.create_event = asyncHandler(async (req, res) => {
             status: data.status == "true" ? true : false,
         },
       });
+      await prisma.property.update({
+        where:{
+          id: data.propertyId
+        },
+        data:{
+          eventStatus: true
+        }
+      });
       return events;
     });
     return res.status(200).send(result);

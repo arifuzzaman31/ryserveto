@@ -121,6 +121,8 @@ exports.branch_update = asyncHandler(async (req, res) => {
           address: data.address,
           terms: data.terms,
           status: data.status == "true" ? true : false,
+          updatedAt:new Date(),
+          updatedBy: req.user?.id
         },
       });
       return branch;
@@ -140,6 +142,7 @@ exports.delete_branch = asyncHandler(async (req, res) => {
     },
     data: {
       deletedAt: new Date(),
+      updatedBy: req.user?.id
     },
   });
   return res.status(200).send(asset);

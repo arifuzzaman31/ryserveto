@@ -173,12 +173,13 @@ exports.property_update = asyncHandler(async (req, res) => {
     });
     const prepareData = { ...prevasset, ...data };
     prepareData.status = data.status == "true" ? true : false;
+    prepareData.updatedBy = req.user?.id;
+    prepareData.updatedAt = new Date();
 
     delete prepareData["id"];
     delete prepareData["ownerId"];
     delete prepareData["table"];
     delete prepareData["createdAt"];
-    delete prepareData["updatedAt"];
     delete prepareData["deletedAt"];
     const result = await prisma.$transaction(async (prisma) => {
       const property = await prisma.Property.update({
@@ -205,6 +206,7 @@ exports.delete_property = asyncHandler(async (req, res) => {
     },
     data: {
       deletedAt: new Date(),
+      updatedBy: req.user?.id
     },
   });
   return res.status(200).send(property);

@@ -126,6 +126,7 @@ exports.business_update = asyncHandler(async (req, res) => {
           tin: data.tin,
           bin: data.bin,
           status: data.status == "true" ? true : false,
+          updatedBy: req.user?.id
         },
       });
       return business;
