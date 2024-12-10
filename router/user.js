@@ -10,6 +10,7 @@ routes.get("/property", property_controller.property_list);
 routes.get("/property/:id", property_controller.get_property);
 routes.get("/property-food/:id", property_controller.property_food);
 routes.get("/event", event_controller.event_list);
+routes.get("/event/:id", event_controller.get_event);
 routes.get("/branch-list/:area?", property_controller.branch_list_property);//get branch list
 routes.get("/branch-property/:id", property_controller.branch_property);//get property under branch
 routes.get("/cuisine", cuisine_controller.cuisine_list);

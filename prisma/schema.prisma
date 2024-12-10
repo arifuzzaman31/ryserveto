@@ -302,6 +302,7 @@ model Events {
   optionalData  Json?
   rules       String?
   description  String?
+  sectSymb    Int?        @default(0)
   status      Boolean     @default(true)
   evbooking   Evbooking[]
   deletedAt   DateTime?
