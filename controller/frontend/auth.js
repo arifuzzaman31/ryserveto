@@ -57,7 +57,7 @@ exports.guest_login = asyncHandler(async (req, res) => {
 
 exports.user_logout = asyncHandler(async(req, res) => {
     try {
-        const info = await req.user;
+        const info = req.user;
         if(info.email == 'user@guest.com'){
             return res.status(200).send({status:true, message: 'Logout Successful'});
         }
@@ -71,7 +71,7 @@ exports.auth_me = asyncHandler(async(req,res) => {
    const info = await authService.userByToken(req.headers.authorization)
    const user = await userService.get_user({id:info.id})
    if(user){
-        return res.status(200).send(info);
+        return res.status(200).send(user);
    }
     return res.status(401).send({status:false, message: 'Invalid User' });
 })
