@@ -34,6 +34,7 @@ exports.create_booking = asyncHandler(async (req, res) => {
       amount: data.amount ?? 0,
       vat: data.vat ?? 0,
       discount: data.discount ?? 0,
+      optionalData: data.menuData,
       grandTotal: data.grandTotal ?? 0,
       customerRequest: data.customerReq,
       bookingType: data.bookingType ?? "Regular",

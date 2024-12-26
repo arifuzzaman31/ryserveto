@@ -24,7 +24,7 @@ exports.add_to_wishList = asyncHandler(async (req, res) => {
 });
 
 exports.get_all_wishList = asyncHandler(async (req, res) => {
-  const property = await prisma.subAssetComponent.findMany({
+  const property = await prisma.property.findMany({
     where: {
       wishLists: {
         some: {
@@ -32,17 +32,13 @@ exports.get_all_wishList = asyncHandler(async (req, res) => {
         },
       },
     },
-    include: {
-      property: {
-        select: {
+    select: {
           id: true,
           listingName: true,
           title: true,
           subTitle: true,
           logo: true,
           images: true
-        },
-      },
     },
   });
   return res.status(200).send(property);
