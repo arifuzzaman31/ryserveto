@@ -43,7 +43,7 @@ exports.create_branch = asyncHandler(async (req, res) => {
 });
 
 exports.branch_list = asyncHandler(async (req, res) => {
-  const { pageNo, perPage } = await req.query;
+  const { pageNo, perPage } = req.query;
   const reqUser = await req.user;
   const dataId = await ownerService.propertyBy(reqUser);
   let where = {};
@@ -131,7 +131,7 @@ exports.branch_update = asyncHandler(async (req, res) => {
     });
     return res.status(200).send(result);
   } catch (error) {
-    return res.status(400).send(JSON.stringify(error));
+    return res.status(400).send({ details: error.message });
   } finally {
     await prisma.$disconnect();
   }

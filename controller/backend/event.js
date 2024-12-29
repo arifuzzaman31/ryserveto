@@ -47,14 +47,18 @@ exports.create_event = asyncHandler(async (req, res) => {
 });
 
 exports.event_list = asyncHandler(async (req, res) => {
-    const { status } = await req.query;
+    const { pageNo, perPage, status } = req.query;
     let where = {};
     if (status) {
       where = {
         status: true,
       };
     }
+    const perPg = perPage ? Number(perPage) : 10;
+    const from = Number(pageNo * perPg) - Number(perPg);
     const event = await prisma.Events.findMany({
+      skip: pageNo ? from : 0,
+      take: perPg,
       orderBy: {
         createdAt: "desc",
       },

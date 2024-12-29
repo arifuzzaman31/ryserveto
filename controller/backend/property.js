@@ -214,7 +214,7 @@ exports.delete_property = asyncHandler(async (req, res) => {
 
 exports.property_signature = asyncHandler(async(req,res) => {
   try {
-    const data = await req.body;
+    const data = req.body;
     const property = await prisma.Property.updateMany({
       where: {
         id: { in: data.ids }
