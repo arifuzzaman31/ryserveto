@@ -101,7 +101,7 @@ exports.branch_update = asyncHandler(async (req, res) => {
   const data = await req.body;
   try {
     const result = await prisma.$transaction(async (prisma) => {
-      let amenity = amenities?.map(itm => itm.name)
+      let amenity = data.amenities?.map(itm => itm.name)
       const branch = await prisma.branch.update({
         where: {
           id: id
