@@ -131,7 +131,7 @@ exports.branch_update = asyncHandler(async (req, res) => {
     });
     return res.status(200).send(result);
   } catch (error) {
-    return res.status(400).send(error);
+    return res.status(400).send(JSON.stringify(error));
   } finally {
     await prisma.$disconnect();
   }
