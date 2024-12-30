@@ -52,12 +52,12 @@ model Owner {
 }
 
 model User {
-  id               Int       @id @default(autoincrement())
-  email            String?   @unique
+  id               Int         @id @default(autoincrement())
+  email            String?     @unique
   firstName        String?
   lastName         String?
   name             String?
-  userType         UserType? @default(CUSTOMER)
+  userType         UserType?   @default(CUSTOMER)
   birthDate        DateTime?
   phoneNumber      String?
   picture          String?
@@ -74,12 +74,12 @@ model User {
   password         String?
   otp              Int?
   otpExpireAt      DateTime?
-  isVerify         Boolean   @default(false)
-  status           Boolean   @default(false)
+  isVerify         Boolean     @default(false)
+  status           Boolean     @default(false)
   deletedAt        DateTime?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  updatedBy        Int             @default(0)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  updatedBy        Int         @default(0)
 
   @@index([name, email, phoneNumber, city])
 }
@@ -96,6 +96,7 @@ model RolePermission {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   updatedBy   Int       @default(0)
+
   @@index([roleName])
 }
 
@@ -110,6 +111,7 @@ model wishList {
   createdAt  DateTime          @default(now())
   updatedAt  DateTime          @updatedAt
   updatedBy  Int               @default(0)
+
   @@index([userId, propertyId])
 }
 
@@ -146,7 +148,8 @@ model Property {
   deletedAt           DateTime?
   createdAt           DateTime          @default(now())
   updatedAt           DateTime          @updatedAt
-  updatedBy           Int       @default(0)
+  updatedBy           Int               @default(0)
+
   @@index([listingName, ownerId, type, reservationCategory, sectSymb])
 }
 
@@ -181,7 +184,8 @@ model Branch {
   deletedAt      DateTime?
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
-  updatedBy   Int       @default(0)
+  updatedBy      Int              @default(0)
+
   @@index([branchName, propertyId, ownerId, area, city])
 }
 
@@ -190,7 +194,7 @@ model Table {
   propertyId Int
   property   Property  @relation(fields: [propertyId], references: [id])
   branchId   Int
-  branch     Branch  @relation(fields: [branchId], references: [id])
+  branch     Branch    @relation(fields: [branchId], references: [id])
   type       compType?
   capacity   Int?
   position   String
@@ -203,8 +207,9 @@ model Table {
   deletedAt  DateTime?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
-  updatedBy   Int       @default(0)
-  @@index([propertyId,branchId,capacity])
+  updatedBy  Int       @default(0)
+
+  @@index([propertyId, branchId, capacity])
 }
 
 model SeatBed {
@@ -223,92 +228,95 @@ model SeatBed {
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
   updatedBy            Int       @default(0)
+
   @@index([propertyId, type])
 }
 
 model FoodCategory {
-  id      Int     @id   @default(autoincrement())
-  categoryName    String
-  images    Json?
-  priority    Int   @default(0)
-  categoryType  String?
+  id           Int       @id @default(autoincrement())
+  categoryName String
+  images       Json?
+  priority     Int       @default(0)
+  categoryType String?
   optionalData Json?
   foods        Food[]
   status       Boolean   @default(true)
   deletedAt    DateTime?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
-  updatedBy   Int       @default(0)
+  updatedBy    Int       @default(0)
 }
 
 model Food {
-  id            Int       @id @default(autoincrement())
-  categoryId    Int
-  category      FoodCategory   @relation(fields: [categoryId],references: [id])
-  name          String
-  images        Json?
-  optionalData  Json?
-  rating        Float     @default(0.0)
-  propertyId    Int
-  property      Property  @relation(fields: [propertyId], references: [id])
-  price         Json?
-  description   String?
-  status        Boolean   @default(true)
-  deletedAt     DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  updatedBy   Int       @default(0)
+  id           Int          @id @default(autoincrement())
+  categoryId   Int
+  category     FoodCategory @relation(fields: [categoryId], references: [id])
+  name         String
+  images       Json?
+  optionalData Json?
+  rating       Float        @default(0.0)
+  propertyId   Int
+  property     Property     @relation(fields: [propertyId], references: [id])
+  price        Json?
+  description  String?
+  status       Boolean      @default(true)
+  deletedAt    DateTime?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  updatedBy    Int          @default(0)
+
   @@index([name, propertyId])
 }
 
 model Section {
-  id        Int         @id @default(autoincrement())
-  title     String
-  slug      String?
-  subtitle  String?
-  pattern   String
-  type      ContentType
-  group     BusinessCategory    @default(RESTAURANT)
-  signature Int         @default(0)
-  content   Json?
-  optionalData  Json?
-  status    Boolean     @default(true)
-  precedency  Int   @default(0)
-  deletedAt DateTime?
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  updatedBy   Int       @default(0)
+  id           Int              @id @default(autoincrement())
+  title        String
+  slug         String?
+  subtitle     String?
+  pattern      String
+  type         ContentType
+  group        BusinessCategory @default(RESTAURANT)
+  signature    Int              @default(0)
+  content      Json?
+  optionalData Json?
+  status       Boolean          @default(true)
+  precedency   Int              @default(0)
+  deletedAt    DateTime?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  updatedBy    Int              @default(0)
 }
 
 model Events {
-  id          Int         @id @default(autoincrement())
-  propertyId  Int
-  property    Property    @relation(fields: [propertyId], references: [id])
-  branchId    Int?
-  branch      Branch?     @relation(fields: [branchId], references: [id])
-  evtName     String
-  slug        String?
-  title       String?
-  subtitle    String?
-  location    String?
-  mapLocation String?
-  address     String?
-  images      Json?
-  capacity    Int         @default(10)
-  startDate   DateTime
-  endDate     DateTime?
-  longitude   String?
-  latitude    String?
-  optionalData  Json?
-  rules       String?
+  id           Int         @id @default(autoincrement())
+  propertyId   Int
+  property     Property    @relation(fields: [propertyId], references: [id])
+  branchId     Int?
+  branch       Branch?     @relation(fields: [branchId], references: [id])
+  evtName      String
+  slug         String?
+  title        String?
+  subtitle     String?
+  location     String?
+  mapLocation  String?
+  address      String?
+  images       Json?
+  capacity     Int         @default(10)
+  startDate    DateTime
+  endDate      DateTime?
+  longitude    String?
+  latitude     String?
+  optionalData Json?
+  rules        String?
   description  String?
-  sectSymb    Int?        @default(0)
-  status      Boolean     @default(true)
-  evbooking   Evbooking[]
-  deletedAt   DateTime?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime?
-  updatedBy   Int       @default(0)
+  sectSymb     Int?        @default(0)
+  status       Boolean     @default(true)
+  evbooking    Evbooking[]
+  deletedAt    DateTime?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime?
+  updatedBy    Int         @default(0)
+
   @@index([propertyId, branchId, mapLocation])
 }
 
@@ -346,7 +354,8 @@ model Booking {
   deletedAt       DateTime?
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
-  updatedBy   Int       @default(0)
+  updatedBy       Int           @default(0)
+
   @@index([propertyId, branchId, ownerId, customerId, phoneNumber, customerName, slot, startDate, status])
 }
 
@@ -360,7 +369,8 @@ model Payment {
   deletedAt   DateTime?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  updatedBy   Int       @default(0)
+  updatedBy   Int           @default(0)
+
   @@index([bookingId, paymentDate, status])
 }
 
@@ -373,7 +383,8 @@ model Amenities {
   deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  updatedBy   Int       @default(0)
+  updatedBy Int       @default(0)
+
   @@index([name])
 }
 
@@ -384,14 +395,15 @@ model Cuisine {
   deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  updatedBy   Int       @default(0)
+  updatedBy Int       @default(0)
+
   @@index([name])
 }
 
 model Evbooking {
-  id           Int          @id @default(autoincrement())
+  id           Int           @id @default(autoincrement())
   customerId   Int
-  customer     User         @relation(fields: [customerId], references: [id])
+  customer     User          @relation(fields: [customerId], references: [id])
   username     String
   phoneNumber  String
   email        String?
@@ -408,10 +420,11 @@ model Evbooking {
   status       Boolean       @default(false)
   optionalData Json?
   issueAt      DateTime
+  bookingStatus BookingStatus @default(value: ON_HOLD)
   deletedAt    DateTime?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
-  updatedBy   Int       @default(0)
+  updatedBy    Int           @default(0)
 }
 
 enum PaymentStatus {

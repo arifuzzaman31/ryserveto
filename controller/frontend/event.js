@@ -121,3 +121,38 @@ exports.get_event = asyncHandler(async (req, res) => {
       });
     return res.status(200).send(event);
 });
+
+exports.event_booking = asyncHandler(async (req, res) => {
+  const data = req.body;
+  const { id } = req.user;
+  try {
+    const bookingData = {
+      customer: { connect: { id: id } },
+      event: { connect: { id: data.eventId } },
+      username: data.username,
+      phoneNumber: data.phoneNumber,
+      email: data.email,
+      address: data.address,
+      eventDate: new Date(data.startDate),
+      issueAt: new Date(data.issueAt),
+      person: data.person,
+      ticketNumber: data.ticketNumber ?? "XYZ32584",
+      price: data.price ?? 0,
+      amount: data.amount ?? 0,
+      vat: data.vat ?? 0,
+      payStatus: data.payStatus ?? "UNPAID",
+      bookingStatus: data.payStatus ?? "ON_HOLD",
+      discount: data.discount ?? 0,
+      optionalData: data.menuData,
+      status: data.status == 'true' ? true : false
+    };
+    const booking = await prisma.Evbooking.create({
+        data: bookingData,
+      });
+    return res.status(200).send(booking);
+  } catch (error) {
+    return res.status(400).send(error.message);
+  } finally {
+    await prisma.$disconnect();
+  }
+});

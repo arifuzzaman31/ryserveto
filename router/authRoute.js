@@ -4,6 +4,7 @@ const userauth_controller = require("../controller/frontend/auth");
 const booking_controller = require("../controller/frontend/booking");
 const wishlist_controller = require("../controller/frontend/wishList");
 const util_controller = require("../controller/backend/utility")
+const event_controller = require("../controller/frontend/event");
 const adminMiddleware = require("../middleware/adminMiddleware");
 
 routes.post("/auth/otp/request", userauth_controller.otp_request);
@@ -36,8 +37,12 @@ routes.route("/wishlist")
     .post(wishlist_controller.add_to_wishList)
     .get(wishlist_controller.get_all_wishList)
 
-    routes.route("/wishlist/:id")
+routes.route("/wishlist/:id")
     .all(adminMiddleware)
     .delete(wishlist_controller.destroy_wishList);
 
+routes.route("/event/booking")
+    .all(adminMiddleware)
+    .post(event_controller.event_booking)
+    
 module.exports = routes;
