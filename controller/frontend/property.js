@@ -12,7 +12,6 @@ exports.property_list = asyncHandler(async (req, res) => {
   }
   const perPg = perPage ? Number(perPage) : 10;
   const from = Number(pageNo * perPg) - Number(perPg);
-
   const [count, property] = await prisma.$transaction([
     prisma.Property.count({ where }),
     prisma.Property.findMany({

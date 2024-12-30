@@ -36,6 +36,7 @@ exports.event_list = asyncHandler(async (req, res) => {
             title:true,
             subtitle: true,
             location: true,
+            images: true,
             mapLocation:true,
             latitude:true,
             longitude:true,
