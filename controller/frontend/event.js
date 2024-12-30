@@ -89,6 +89,7 @@ exports.get_event = asyncHandler(async (req, res) => {
             slug: true,
             title:true,
             subtitle: true,
+            images: true,
             location: true,
             mapLocation:true,
             latitude:true,
