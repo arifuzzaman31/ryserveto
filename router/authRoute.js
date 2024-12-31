@@ -43,6 +43,7 @@ routes.route("/wishlist/:id")
 
 routes.route("/event/booking")
     .all(adminMiddleware)
+    .get(event_controller.event_booking_list)
     .post(event_controller.event_booking)
     
 module.exports = routes;

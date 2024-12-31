@@ -408,18 +408,19 @@ model Evbooking {
   phoneNumber  String
   email        String?
   address      String?
-  ticketNumber String
+  ticketNumber String?
   person       Int           @default(1)
   price        Int           @default(0)
   amount       Float         @default(0.0)
+  discount     Float         @default(0.0)
   vat          Float         @default(0.0)
-  payStatus    PaymentStatus
+  payStatus    PaymentStatus @default(value: UNPAID)
   eventDate    DateTime
   eventId      Int
   event        Events        @relation(fields: [eventId], references: [id])
   status       Boolean       @default(false)
   optionalData Json?
-  issueAt      DateTime
+  issueAt      DateTime      @default(now())
   bookingStatus BookingStatus @default(value: ON_HOLD)
   deletedAt    DateTime?
   createdAt    DateTime      @default(now())

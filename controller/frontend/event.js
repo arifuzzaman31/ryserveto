@@ -95,6 +95,9 @@ exports.get_event = asyncHandler(async (req, res) => {
             latitude:true,
             longitude:true,
             address:true,
+            capacity:true,
+            startDate:true,
+            endDate:true,
             property:{
               select:{
                 id:true,
@@ -133,21 +136,93 @@ exports.event_booking = asyncHandler(async (req, res) => {
       phoneNumber: data.phoneNumber,
       email: data.email,
       address: data.address,
-      eventDate: new Date(data.startDate),
+      eventDate: new Date(data.eventDate),
       issueAt: new Date(data.issueAt),
       person: data.person,
-      ticketNumber: data.ticketNumber ?? "XYZ32584",
+      ticketNumber: data.ticketNumber ?? "CKTXYZ32584",
       price: data.price ?? 0,
       amount: data.amount ?? 0,
       vat: data.vat ?? 0,
       payStatus: data.payStatus ?? "UNPAID",
-      bookingStatus: data.payStatus ?? "ON_HOLD",
-      discount: data.discount ?? 0,
+      // bookingStatus: data.payStatus ?? "ON_HOLD",
+      // discount: data.discount ?? 0,
       optionalData: data.menuData,
       status: data.status == 'true' ? true : false
     };
     const booking = await prisma.Evbooking.create({
         data: bookingData,
+      });
+    return res.status(200).send(booking);
+  } catch (error) {
+    return res.status(400).send(error.message);
+  } finally {
+    await prisma.$disconnect();
+  }
+});
+
+exports.event_booking_list = asyncHandler(async (req, res) => {
+  const { id } = req.user;
+  // return res.status(200).send(req.user);
+  try {
+    const booking = await prisma.Evbooking.findMany({
+        where:{customerId:id},
+        select: {
+          id:true,
+          customerId:true,
+          username:true,
+          phoneNumber:true,
+          email:true,
+          address:true,
+          person:true,
+          payStatus:true,
+          eventDate:true,
+          eventId:true,
+          bookingStatus:true,
+          status:true,
+          status:true,
+          event:{
+            select: {
+              id:true,
+              propertyId: true,
+              branchId: true,
+              evtName:true,
+              slug: true,
+              title:true,
+              subtitle: true,
+              images: true,
+              location: true,
+              mapLocation:true,
+              latitude:true,
+              longitude:true,
+              address:true,
+              capacity:true,
+              startDate:true,
+              endDate:true,
+              property:{
+                select:{
+                  id:true,
+                  listingName:true,
+                  sectSymb:true,
+                  type:true,
+                  logo:true,
+                  images:true,
+                }
+              },
+              branch:{
+                select:{
+                  id:true,
+                  branchName:true,
+                  images:true,
+                  area:true,
+                  city:true,
+                  country:true,
+                  latitude:true,
+                  longitude:true
+                }
+              }
+            }
+          }
+        }
       });
     return res.status(200).send(booking);
   } catch (error) {
