@@ -144,8 +144,8 @@ exports.event_booking = asyncHandler(async (req, res) => {
       amount: data.amount ?? 0,
       vat: data.vat ?? 0,
       payStatus: data.payStatus ?? "UNPAID",
-      // bookingStatus: data.payStatus ?? "ON_HOLD",
-      // discount: data.discount ?? 0,
+      bookingStatus: data.payStatus ?? "ON_HOLD",
+      discount: data.discount ?? 0,
       optionalData: data.menuData,
       status: data.status == 'true' ? true : false
     };
@@ -172,13 +172,11 @@ exports.event_booking_list = asyncHandler(async (req, res) => {
           username:true,
           phoneNumber:true,
           email:true,
-          address:true,
           person:true,
           payStatus:true,
           eventDate:true,
           eventId:true,
           bookingStatus:true,
-          status:true,
           status:true,
           event:{
             select: {
@@ -202,7 +200,6 @@ exports.event_booking_list = asyncHandler(async (req, res) => {
                 select:{
                   id:true,
                   listingName:true,
-                  sectSymb:true,
                   type:true,
                   logo:true,
                   images:true,
