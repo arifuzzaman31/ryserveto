@@ -137,18 +137,20 @@ exports.event_booking = asyncHandler(async (req, res) => {
       email: data.email,
       address: data.address,
       eventDate: new Date(data.eventDate),
-      issueAt: new Date(data.issueAt),
       person: data.person,
       ticketNumber: data.ticketNumber ?? "CKTXYZ32584",
       price: data.price ?? 0,
       amount: data.amount ?? 0,
       vat: data.vat ?? 0,
       payStatus: data.payStatus ?? "UNPAID",
-      bookingStatus: data.payStatus ?? "ON_HOLD",
+      bookingStatus: data.bookingStatus ?? "ON_HOLD",
       discount: data.discount ?? 0,
       optionalData: data.menuData,
       status: data.status == 'true' ? true : false
     };
+    if(data.issueAt){
+      bookingData.issueAt = new Date(data.issueAt)
+    }
     const booking = await prisma.Evbooking.create({
         data: bookingData,
       });
