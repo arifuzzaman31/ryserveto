@@ -98,6 +98,7 @@ exports.get_event = asyncHandler(async (req, res) => {
             capacity:true,
             startDate:true,
             endDate:true,
+            description:true,
             property:{
               select:{
                 id:true,
@@ -153,7 +154,7 @@ exports.event_booking = asyncHandler(async (req, res) => {
     }
     const booking = await prisma.Evbooking.create({
         data: bookingData,
-      });
+    });
     return res.status(200).send(booking);
   } catch (error) {
     return res.status(400).send(error.message);
@@ -164,10 +165,15 @@ exports.event_booking = asyncHandler(async (req, res) => {
 
 exports.event_booking_list = asyncHandler(async (req, res) => {
   const { id } = req.user;
-  // return res.status(200).send(req.user);
   try {
+    const { from, to } = req.query;
     const booking = await prisma.Evbooking.findMany({
+        skip: Number(from) ? Number(from) : 0,
+        take: Number(to) ? Number(to) : 5,
         where:{customerId:id},
+        orderBy: {
+          createdAt: "desc",
+        },
         select: {
           id:true,
           customerId:true,

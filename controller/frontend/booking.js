@@ -76,7 +76,7 @@ exports.create_booking = asyncHandler(async (req, res) => {
 });
 
 exports.booking_list = asyncHandler(async (req, res) => {
-  const { from, to } = await req.query;
+  const { from, to } = req.query;
   const bookings = await prisma.Booking.findMany({
     skip: Number(from) ? Number(from) : 0,
     take: Number(to) ? Number(to) : 5,

@@ -90,6 +90,8 @@ exports.get_property = asyncHandler(async (req, res) => {
       offday: true,
       position: true,
       status: true,
+      eventStatus: true,
+      event:{select:{id:true}},
       branches: {
         select: {
           id: true,
