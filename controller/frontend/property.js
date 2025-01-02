@@ -32,7 +32,8 @@ exports.property_list = asyncHandler(async (req, res) => {
         branches: {
           select:{
             id:true,city:true,area:true,longitude:true,latitude:true,propertyId:true,location:true
-          }
+          },
+          take:1
         },
         status: true,
         // tables: true
@@ -132,6 +133,7 @@ exports.get_property = asyncHandler(async (req, res) => {
             },
           },
         },
+        // take:1
       },
       food: {
         select: {
