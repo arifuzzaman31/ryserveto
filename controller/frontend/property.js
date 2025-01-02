@@ -424,7 +424,12 @@ async function getProperty(tp, query) {
         images: true,
         position: true,
         reservationCategory: true,
-        // branches: true,
+        branches: {
+          select:{
+            id:true,city:true,area:true,longitude:true,latitude:true,propertyId:true,location:true
+          },
+          take:1
+        },
         status: true,
         tables: { select: { id: true, position: true, capacity: true } },
         booking: { select: { id: true, startDate: true, slot: true } },
