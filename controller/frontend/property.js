@@ -31,7 +31,7 @@ exports.property_list = asyncHandler(async (req, res) => {
         reservationCategory: true,
         branches: {
           select:{
-            id:true,city:true,area:true,longitude:true,latitude:true,propertyId:true,
+            id:true,city:true,area:true,longitude:true,latitude:true,propertyId:true,location:true
           }
         },
         status: true,
