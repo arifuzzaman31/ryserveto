@@ -29,7 +29,11 @@ exports.property_list = asyncHandler(async (req, res) => {
         logo: true,
         images: true,
         reservationCategory: true,
-        // branches: true,
+        branches: {
+          select:{
+            id:true,city:true,area:true,longitude:true,latitude:true,propertyId:true,
+          }
+        },
         status: true,
         // tables: true
       },
@@ -51,13 +55,16 @@ exports.search_list = asyncHandler(async (req, res) => {
     case "HOTEL":
       break;
     case "RESTAURANT":
-      data = await getProperty("RESTAURANT", req.query);
+      data = await getProperty(grp.toUpperCase(), req.query);
       break;
     case "SERVICE_APARTMENT":
       break;
     case "MOVIE_THEATER":
       break;
     case "SPA":
+      break;
+    case "EVENTS":
+      data = await getProperty(grp.toUpperCase(), req.query);
       break;
     case "BY-BRANCH":
       data = await getBranchByProperty("RESTAURANT", req.query);
@@ -392,7 +399,7 @@ exports.branch_list_property = asyncHandler(async (req, res) => {
 
 async function getProperty(tp, query) {
   const { pageNo, perPage } = query;
-  let where = await whereMaker(query);
+  let where = await whereMaker(tp,query);
   // return {where};
   const perPg = perPage ? Number(perPage) : 10;
   const from = Number(pageNo * perPg) - Number(perPg);
@@ -527,7 +534,7 @@ async function whereBranchMaker(query) {
   return where;
 }
 
-async function whereMaker(query) {
+async function whereMaker(tp,query) {
   const { date, position, seating, cuisine } = query;
   let where = {};
   if (cuisine) {
@@ -542,6 +549,14 @@ async function whereMaker(query) {
       where.OR = orConditions;
     } else {
       where.position = pos;
+    }
+  }
+  if (tp) {
+    if (where.length > 0) {
+      orConditions.push({ type: tp });
+      where.OR = orConditions;
+    } else {
+      where.type = tp;
     }
   }
   if (seating) {
