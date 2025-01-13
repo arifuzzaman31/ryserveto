@@ -114,6 +114,10 @@ routes
   .delete(role_controller.delete_role);
 
 routes
+  .route("/make-section/:id").all(adminMiddleware)
+  .put(util_controller.section_update);
+
+routes
   .route("/make-section").all(adminMiddleware)
   .get(util_controller.section_list)
   .post(util_controller.create_section);

@@ -428,7 +428,7 @@ async function getProperty(tp, query) {
           select:{
             id:true,city:true,area:true,longitude:true,latitude:true,propertyId:true,location:true
           },
-          take:1
+          take:2
         },
         status: true,
         tables: { select: { id: true, position: true, capacity: true } },
@@ -542,7 +542,7 @@ async function whereBranchMaker(query) {
 }
 
 async function whereMaker(tp,query) {
-  const { date, position, seating, cuisine } = query;
+  const { date, position, seating, cuisine, area } = query;
   let where = {};
   if (cuisine) {
     const cuisine_arr = cuisine.split("_");
@@ -581,6 +581,14 @@ async function whereMaker(tp,query) {
       where.OR = orConditions;
     } else {
       where.booking = { none: { startDate: new Date(date) } };
+    }
+  }
+  if (area) {
+    if (where.length > 0) {
+      orConditions.push({ branches: { some: { area: area } } });
+      where.OR = orConditions;
+    } else {
+      where.branches = { some: { area: area } };
     }
   }
   return where;
