@@ -88,7 +88,7 @@ exports.section_update = asyncHandler(async(req,res) => {
           type: data.type,
           group: data.group,
           pattern: data.pattern,
-          signature: data.signature ?? 0,
+          signature: data.signature,
           content: data.content,
           optionalData: data.optionalData,
           status: data.status == "true" ? true : false,
@@ -96,7 +96,7 @@ exports.section_update = asyncHandler(async(req,res) => {
       });
       return sect;
     });
-    return res.status(201).send(result);
+    return res.status(200).send(result);
   } catch (error) {
     return res.status(400).send(error.message);
   } finally {
@@ -122,6 +122,29 @@ exports.section_list = asyncHandler(async(req,res) => {
         orderBy: orderBy 
     });
     return res.status(200).send(resp);
+  } catch (error) {
+    return res.status(400).send(error.message);
+  } finally {
+    await prisma.$disconnect();
+  }
+})
+
+exports.section_destroy = asyncHandler(async(req,res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const result = await prisma.$transaction(async (prisma) => {
+      const sect = await prisma.section.update({
+        where: {
+          id: id,
+        },
+        data: {
+          deletedAt: new Date(),
+          updatedBy: req.user?.id
+        },
+      });
+      return sect;
+    });
+    return res.status(200).send(result);
   } catch (error) {
     return res.status(400).send(error.message);
   } finally {

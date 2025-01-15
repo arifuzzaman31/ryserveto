@@ -115,6 +115,7 @@ routes
 
 routes
   .route("/make-section/:id").all(adminMiddleware)
+  .delete(util_controller.section_destroy)
   .put(util_controller.section_update);
 
 routes

@@ -405,7 +405,10 @@ async function getProperty(tp, query) {
   // return {where};
   const perPg = perPage ? Number(perPage) : 10;
   const from = Number(pageNo * perPg) - Number(perPg);
-
+  const bwhere = {}
+  if(query.area){
+    bwhere.area = query.area
+  }
   const [count, property] = await prisma.$transaction([
     prisma.Property.count({ where }),
     prisma.Property.findMany({
@@ -425,10 +428,11 @@ async function getProperty(tp, query) {
         position: true,
         reservationCategory: true,
         branches: {
+          where:{...bwhere},
           select:{
             id:true,city:true,area:true,longitude:true,latitude:true,propertyId:true,location:true
           },
-          take:2
+          take:3
         },
         status: true,
         tables: { select: { id: true, position: true, capacity: true } },
