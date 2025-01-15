@@ -546,11 +546,17 @@ async function whereBranchMaker(query) {
 }
 
 async function whereMaker(tp,query) {
-  const { date, position, seating, cuisine, area } = query;
+  const { date, position, seating, cuisine, area, byName } = query;
   let where = {};
   if (cuisine) {
     const cuisine_arr = cuisine.split("_");
     where.cuisines = { hasSome: cuisine_arr };
+  }
+  if (byName) {
+    where.listingName = { 
+      contains: byName,
+      mode: 'insensitive'
+    };
   }
   let orConditions = [];
   if (position) {
