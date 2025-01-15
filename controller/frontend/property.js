@@ -402,7 +402,7 @@ exports.branch_list_property = asyncHandler(async (req, res) => {
 async function getProperty(tp, query) {
   const { pageNo, perPage } = query;
   let where = await whereMaker(tp,query);
-  // return {where};
+  // return {where}; p6PdBMH]z_5r concord
   const perPg = perPage ? Number(perPage) : 10;
   const from = Number(pageNo * perPg) - Number(perPg);
   const bwhere = {}
