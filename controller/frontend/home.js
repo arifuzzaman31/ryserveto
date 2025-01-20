@@ -24,3 +24,24 @@ exports.home_list = asyncHandler(async (req, res) => {
     return res.status(200).send(resp);
 });
 
+exports.foodCategory_list = asyncHandler(async (req, res) => {
+    const { perPage,pageNo } = req.query
+    let orderBy = {
+        priority: "asc"
+    };
+    let where = {
+        status: true,
+        deletedAt:null
+    };
+    const perPg = perPage ? Number(perPage) : 10;
+  const from = Number(pageNo * perPg) - Number(perPg);
+    const resp = await prisma.FoodCategory.findMany({
+        skip: pageNo ? from : 0,
+        take: perPg,
+        where,
+        orderBy: orderBy,
+        select: { id: true, categoryName: true, images: true, priority: true,status: true }    
+    });
+    return res.status(200).send(resp);
+});
+
