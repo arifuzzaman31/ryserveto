@@ -78,77 +78,81 @@ exports.search_list = asyncHandler(async (req, res) => {
 });
 
 exports.get_property = asyncHandler(async (req, res) => {
-  const id = parseInt(req.params.id, 10);
-  const property = await prisma.Property.findFirst({
-    where: {
-      id: id,
-    },
-    select: {
-      id: true,
-      type: true,
-      listingName: true,
-      title: true,
-      subTitle: true,
-      logo: true,
-      cuisines: true,
-      slot: true,
-      images: true,
-      description: true,
-      terms: true,
-      offday: true,
-      position: true,
-      status: true,
-      eventStatus: true,
-      event:{select:{id:true}},
-      branches: {
-        select: {
-          id: true,
-          propertyId: true,
-          branchName: true,
-          images: true,
-          description: true,
-          level: true,
-          terms: true,
-          city: true,
-          area: true,
-          country: true,
-          amenities: true,
-          latitude: true,
-          longitude: true,
-          location: true,
-          address: true,
-          status: true,
-          longitude: true,
-          tables: {
-            select: {
-              id: true,
-              branchId: true,
-              type: true,
-              capacity: true,
-              position: true,
-              size: true,
-              image: true,
-              ryservable: true,
-              status: true,
+  try {
+    const id = parseInt(req.params.id, 10);
+    const property = await prisma.Property.findFirst({
+      where: {
+        id: id,
+      },
+      select: {
+        id: true,
+        type: true,
+        listingName: true,
+        title: true,
+        subTitle: true,
+        logo: true,
+        cuisines: true,
+        slot: true,
+        images: true,
+        description: true,
+        terms: true,
+        offday: true,
+        position: true,
+        status: true,
+        eventStatus: true,
+        event:{select:{id:true}},
+        branches: {
+          select: {
+            id: true,
+            propertyId: true,
+            branchName: true,
+            images: true,
+            description: true,
+            level: true,
+            terms: true,
+            city: true,
+            area: true,
+            country: true,
+            amenities: true,
+            latitude: true,
+            longitude: true,
+            location: true,
+            address: true,
+            status: true,
+            longitude: true,
+            tables: {
+              select: {
+                id: true,
+                branchId: true,
+                type: true,
+                capacity: true,
+                position: true,
+                size: true,
+                image: true,
+                ryservable: true,
+                status: true,
+              },
             },
           },
+          // take:1
         },
-        // take:1
-      },
-      food: {
-        select: {
-          id: true,
-          name: true,
-          images: true,
-          propertyId: true,
-          price: true,
-          description: true,
-          status: true,
+        food: {
+          select: {
+            id: true,
+            name: true,
+            images: true,
+            propertyId: true,
+            price: true,
+            description: true,
+            status: true,
+          },
         },
       },
-    },
-  });
-  return res.status(200).send(property);
+    });
+    return res.status(200).send(property);
+  } catch (error) {
+    return res.status(400).send(error.message);
+  }
 });
 
 exports.get_branch_property = asyncHandler(async (req, res) => {
