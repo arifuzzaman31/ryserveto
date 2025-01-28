@@ -35,17 +35,12 @@ exports.home_list = asyncHandler(async (req, res) => {
 
 exports.foodCategory_list = asyncHandler(async (req, res) => {
   try {
-    const id = parseInt(req.params.id, 10);
+    const propertyId = parseInt(req.params.id, 10);
     const { perPage, pageNo } = req.query;
     let orderBy = {
       priority: "asc",
     };
     let where = {
-      foods: {
-        some: {
-          propertyId: id,
-        },
-      },
       status: true,
       deletedAt:null
     };
@@ -63,6 +58,9 @@ exports.foodCategory_list = asyncHandler(async (req, res) => {
         priority: true,
         status: true,
         foods: {
+          where: {
+            propertyId: propertyId,
+          },
           select: {
             id: true,
             name: true,
