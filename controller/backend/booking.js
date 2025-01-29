@@ -163,14 +163,14 @@ exports.get_all_booking = asyncHandler(async (req, res) => {
             reservationCategory: true,
           },
         },
-        // table: {
-        //   select: {
-        //     id: true,
-        //     capacity: true,
-        //     type: true,
-        //     size: true,
-        //   },
-        // },
+        table: {
+          select: {
+            id: true,
+            capacity: true,
+            type: true,
+            size: true,
+          },
+        },
       },
     }),
   ]);
