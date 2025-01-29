@@ -139,14 +139,16 @@ routes
     .put(food_controller.update_food);
     
   routes
-    .route("/booking").all(adminMiddleware)
+    .route("/booking")
+    // .all(adminMiddleware)
     .get(booking_controller.get_all_booking)
 //     .post(booking_controller.create_booking);
 
-// routes
-//     .route("/booking/:id").all(adminMiddleware)
+routes
+    .route("/booking/:id")
+    // .all(adminMiddleware)
 //     .get(booking_controller.get_booking)
-//     .put(booking_controller.update_booking)
+    .put(booking_controller.update_booking)
 //     .delete(booking_controller.delete_booking);
 
 // routes.get("/report",adminMiddleware,report_controller.get_report);
