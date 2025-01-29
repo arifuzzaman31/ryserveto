@@ -14,7 +14,7 @@ const util_controller = require("../controller/backend/utility");
 const event_controller = require("../controller/backend/event");
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
-// const booking_controller = require("../controller/backend/booking");
+const booking_controller = require("../controller/backend/booking");
 // const report_controller = require("../controller/backend/report");
 // const dashboard_controller = require("../controller/backend/dashboard");
 const adminMiddleware = require("../middleware/adminMiddleware");
@@ -138,9 +138,9 @@ routes
     .get(food_controller.get_food)
     .put(food_controller.update_food);
     
-//   routes
-//     .route("/booking").all(adminMiddleware)
-//     .get(booking_controller.get_all_booking)
+  routes
+    .route("/booking").all(adminMiddleware)
+    .get(booking_controller.get_all_booking)
 //     .post(booking_controller.create_booking);
 
 // routes

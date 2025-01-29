@@ -21,13 +21,13 @@ routes.post("/test-mail", util_controller.sendtestmail);
 
 routes
     .route("/booking")
-    .all(adminMiddleware)
+    // .all(adminMiddleware)
     .get(booking_controller.booking_list)
     .post(booking_controller.create_booking);
 
 routes
     .route("/booking/:id")
-    .all(adminMiddleware)
+    // .all(adminMiddleware)
     .get(booking_controller.get_booking)
     .put(booking_controller.update_booking)
     .delete(booking_controller.delete_booking);

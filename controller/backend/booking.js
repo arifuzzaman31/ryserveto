@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
-const prisma = require("../../db/prisma");
 const userService = require("../../services/userService");
 const ownerService = require("../../services/ownerService");
+const prisma = require("../../lib/db/prisma");
 const helper = require("../../helper/helper");
 
 exports.create_booking = asyncHandler(async (req, res) => {
@@ -98,31 +98,30 @@ exports.create_booking = asyncHandler(async (req, res) => {
 });
 
 exports.get_all_booking = asyncHandler(async (req, res) => {
-  const { pageNo, perPage, status, event, startDate, endDate, subAssetCompId } =
-    await req.query;
-  const dataId = await ownerService.propertyBy(req.user);
+  const { pageNo, perPage, status, event, startDate, endDate, subAssetCompId } = req.query;
+  // const dataId = await ownerService.propertyBy(req.user);
   let where = {};
-  if (dataId != "all") {
-    where.ownerId = dataId;
-  }
-  if (
-    req.user.userType == "BUSINESS_MANAGER" ||
-    req.user.userType == "LISTING_MANAGER"
-  ) {
-    where.assetId = req.user.assetId;
-  }
-  where.deleted = null;
+  // if (dataId != "all") {
+  //   where.ownerId = dataId;
+  // }
+  // if (
+  //   req.user.userType == "BUSINESS_MANAGER" ||
+  //   req.user.userType == "LISTING_MANAGER"
+  // ) {
+  //   where.assetId = req.user.assetId;
+  // }
+  where.deletedAt = null;
   if (status) where.status = status;
-  if (subAssetCompId) where.subAssetCompId = subAssetCompId;
-  if (event) {
-    if (event == "Regular") {
-      where.bookingType = "Regular";
-    } else {
-      where.bookingType = {
-        not: "Regular",
-      };
-    }
-  }
+  // if (propertyId) where.propertyId = propertyId;
+  // if (event) {
+  //   if (event == "Regular") {
+  //     where.bookingType = "Regular";
+  //   } else {
+  //     where.bookingType = {
+  //       not: "Regular",
+  //     };
+  //   }
+  // }
 
   if (startDate && endDate) {
     where.startDate = {
@@ -152,11 +151,11 @@ exports.get_all_booking = asyncHandler(async (req, res) => {
         customer: {
           select: {
             id: true,
-            name: true,
-            phoneNumber: true,
+            // name: true,
+            // phoneNumber: true,
           },
         },
-        subAssetComponent: {
+        property: {
           select: {
             id: true,
             listingName: true,
@@ -164,14 +163,14 @@ exports.get_all_booking = asyncHandler(async (req, res) => {
             reservationCategory: true,
           },
         },
-        table: {
-          select: {
-            id: true,
-            capacity: true,
-            type: true,
-            size: true,
-          },
-        },
+        // table: {
+        //   select: {
+        //     id: true,
+        //     capacity: true,
+        //     type: true,
+        //     size: true,
+        //   },
+        // },
       },
     }),
   ]);
@@ -197,12 +196,12 @@ exports.get_booking = asyncHandler(async (req, res) => {
 exports.update_booking = asyncHandler(async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
-    const data = await req.body;
+    const data = req.body;
     const result = await prisma.$transaction(async (prisma) => {
       const prevasset = await prisma.Booking.findFirst({
         where: { id: id },
         include: {
-          subAssetComponent: {
+          property: {
             select: {
               id: true,
               listingName: true,
@@ -226,13 +225,13 @@ exports.update_booking = asyncHandler(async (req, res) => {
         (prepareData.endDate = data.endDate
           ? new Date(data.endDate)
           : prepareData.endDate);
-      if (data.tableId) {
-        prepareData.tableId = data.tableId;
+      // if (data.tableId) {
+        // prepareData.tableId = data.tableId;
         if (data.status == "CONFIRMED" && prevasset.endDate > new Date()) {
           const chkBooking = await prisma.booking.findFirst({
             where: {
-              subAssetCompId: prevasset.subAssetCompId,
-              tableId: data.tableId,
+              propertyId: prevasset.propertyId,
+              // tableId: data.tableId,
               startDate: prevasset.startDate,
               slot: data.slot,
             },
@@ -246,11 +245,11 @@ exports.update_booking = asyncHandler(async (req, res) => {
               });
           }
         }
-      }
+      // }
       delete prepareData["id"];
       delete prepareData["createdAt"];
-      delete prepareData["subAssetComponent"];
-      delete prepareData["deleted"];
+      delete prepareData["property"];
+      delete prepareData["deletedAt"];
       // return res.status(200).send(prepareData);
       const booking = await prisma.Booking.update({
         where: {
@@ -264,7 +263,7 @@ exports.update_booking = asyncHandler(async (req, res) => {
         let message;
         if (data.status == "CONFIRMED" || data.status == "CANCELED") {
           let text = data.status.toLowerCase();
-          message = `Reservation under ${prevasset.customerName} at ${prevasset.subAssetComponent.listingName} is ${text} for ${customDate} at ${booking.slot}.\nFor support, contact 01923283543`;
+          message = `Reservation under ${prevasset.customerName} at ${prevasset.property.listingName} is ${text} for ${customDate} at ${booking.slot}.\nFor support, contact 01923283543`;
           if (process.env.SMS_TO_USER == 'true') {
             await helper.runSMSservice(encodeURI(message), phone_number);
           }
