@@ -98,7 +98,7 @@ exports.create_booking = asyncHandler(async (req, res) => {
 });
 
 exports.get_all_booking = asyncHandler(async (req, res) => {
-  const { pageNo, perPage, status, event, startDate, endDate, subAssetCompId } = req.query;
+  const { pageNo, perPage, status, event, startDate, endDate, propertyId, keyword } = req.query;
   // const dataId = await ownerService.propertyBy(req.user);
   let where = {};
   // if (dataId != "all") {
@@ -122,7 +122,13 @@ exports.get_all_booking = asyncHandler(async (req, res) => {
   //     };
   //   }
   // }
-
+  if(keyword){
+    where.OR = [
+      { customerName: { contains: keyword, mode: "insensitive" } },
+      { phoneNumber: { contains: keyword, mode: "insensitive" } },
+      { property: { listingName: { contains: keyword, mode: "insensitive" } } }
+    ];
+  }
   if (startDate && endDate) {
     where.startDate = {
       gte: new Date(startDate),
