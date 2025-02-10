@@ -19,11 +19,18 @@ exports.create_table = asyncHandler(async (req, res) => {
 });
 
 exports.table_list = asyncHandler(async (req, res) => {
-  const { propertyId, reservationCategory } = await req.query;
+  const { propertyId, reservationCategory, branchId } = req.query;
   try {
+    let condition = {}
+    if(propertyId){
+      condition.propertyId = parseInt(propertyId,10)
+    }
+    if(branchId){
+      condition.branchId = parseInt(branchId,10)
+    }
     const tables = await prisma.Table.findMany({
       where: {
-        propertyId: parseInt(propertyId,10),
+        ...condition,
         property: {
           reservationCategory: reservationCategory,
         },

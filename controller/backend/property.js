@@ -136,19 +136,6 @@ exports.property_listwith_slot = asyncHandler(async (req, res) => {
             id: true,
             propertyId: true,
             branchName: true,
-            tables: {
-              select: {
-                id: true,
-                branchId: true,
-                type: true,
-                capacity: true,
-                position: true,
-                size: true,
-                image: true,
-                ryservable: true,
-                status: true,
-              },
-            },
           },
           take:1
         },
