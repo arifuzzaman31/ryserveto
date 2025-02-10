@@ -58,7 +58,8 @@ routes
   .delete(cuisine_controller.delete_cuisine);
 
 routes
-  .route("/property").all(adminMiddleware)
+  .route("/property")
+  // .all(adminMiddleware)
   .get(property_controller.property_list)
   .post(property_controller.create_property);
 routes

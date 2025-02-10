@@ -42,7 +42,7 @@ exports.create_property = asyncHandler(async (req, res) => {
 });
 
 exports.property_list = asyncHandler(async (req, res) => {
-  const { pageNo, perPage } = await req.query;
+  const { pageNo, perPage } = req.query;
   const dataId = await ownerService.propertyBy(await req.user);
   let where = {};
   if (dataId != "all") {
@@ -99,7 +99,7 @@ exports.property_list = asyncHandler(async (req, res) => {
 });
 
 exports.property_listwith_slot = asyncHandler(async (req, res) => {
-  const { pageNo, perPage } = await req.query;
+  const { pageNo, perPage } = req.query;
   const dataId = await ownerService.propertyBy(await req.user);
   let where = {};
   if (dataId != "all") {
