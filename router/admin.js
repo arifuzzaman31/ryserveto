@@ -58,10 +58,14 @@ routes
   .delete(cuisine_controller.delete_cuisine);
 
 routes
-  .route("/property")
-  // .all(adminMiddleware)
+  .route("/property").all(adminMiddleware)
   .get(property_controller.property_list)
   .post(property_controller.create_property);
+
+routes
+  .route("/property-with-slot")
+  .get(property_controller.property_listwith_slot)
+
 routes
   .route("/property/:id").all(adminMiddleware)
   .get(property_controller.get_property)
@@ -143,7 +147,7 @@ routes
     .route("/booking")
     // .all(adminMiddleware)
     .get(booking_controller.get_all_booking)
-//     .post(booking_controller.create_booking);
+    .post(booking_controller.create_booking);
 
 routes
     .route("/booking/:id")

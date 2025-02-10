@@ -48,7 +48,7 @@ exports.property_list = asyncHandler(async (req, res) => {
   if (dataId != "all") {
     where.ownerId = dataId;
   }
-  const { keyword } = await req.query;
+  const { keyword } = req.query;
   if (keyword) {
     where.listingName = {
       contains: keyword,
@@ -59,7 +59,7 @@ exports.property_list = asyncHandler(async (req, res) => {
     req.user.userType == "BUSINESS_MANAGER" ||
     req.user.userType == "LISTING_MANAGER"
   ) {
-    // where.assetId = req.user.assetId;
+    where.assetId = req.user.assetId;
   }
   const perPg = perPage ? Number(perPage) : 10;
   const from = Number(pageNo * perPg) - Number(perPg);
@@ -82,10 +82,7 @@ exports.property_list = asyncHandler(async (req, res) => {
         images: true,
         eventStatus: true,
         reservationCategory: true,
-        // branches: true,
         status: true
-        // tables: true,
-        // prices: true,
       },
     }),
   ]);
@@ -100,11 +97,11 @@ exports.property_list = asyncHandler(async (req, res) => {
 
 exports.property_listwith_slot = asyncHandler(async (req, res) => {
   const { pageNo, perPage } = req.query;
-  const dataId = await ownerService.propertyBy(await req.user);
+  // const dataId = await ownerService.propertyBy(await req.user);
   let where = {};
-  if (dataId != "all") {
-    where.ownerId = dataId;
-  }
+  // if (dataId != "all") {
+  //   where.ownerId = dataId;
+  // }
   const { keyword } = req.query;
   if (keyword) {
     where.listingName = {
@@ -112,12 +109,12 @@ exports.property_listwith_slot = asyncHandler(async (req, res) => {
       mode: "insensitive",
     };
   }
-  if (
-    req.user.userType == "BUSINESS_MANAGER" ||
-    req.user.userType == "LISTING_MANAGER"
-  ) {
+  // if (
+  //   req.user.userType == "BUSINESS_MANAGER" ||
+  //   req.user.userType == "LISTING_MANAGER"
+  // ) {
     // where.assetId = req.user.assetId;
-  }
+  // }
   const perPg = perPage ? Number(perPage) : 10;
   const from = Number(pageNo * perPg) - Number(perPg);
 
@@ -134,7 +131,27 @@ exports.property_listwith_slot = asyncHandler(async (req, res) => {
         id: true,
         listingName: true,
         status: true,
-        tables: true,
+        branches: {
+          select: {
+            id: true,
+            propertyId: true,
+            branchName: true,
+            tables: {
+              select: {
+                id: true,
+                branchId: true,
+                type: true,
+                capacity: true,
+                position: true,
+                size: true,
+                image: true,
+                ryservable: true,
+                status: true,
+              },
+            },
+          },
+          take:1
+        },
         slot:true
       },
     }),

@@ -10,8 +10,9 @@ exports.create_booking = asyncHandler(async (req, res) => {
     const result = await prisma.$transaction(async (prisma) => {
       const chkBooking = await prisma.booking.findFirst({
         where: {
-          subAssetCompId: data.subAssetCompId,
+          propertyId: data.propertyId,
           tableId: data.tableId,
+          branchId: data.branchId,
           startDate: new Date(data.startDate),
           slot: data.slot,
         },
@@ -24,7 +25,7 @@ exports.create_booking = asyncHandler(async (req, res) => {
       });
       if (!createdUser) {
         const demoMail =
-          "user" + Math.floor(Math.random() * 10000) + "@gmail.com";
+          "user" + Math.floor(Math.random() * 10000) + "@fakemail.com";
         createdUser = await prisma.user.create({
           data: {
             email: demoMail,
@@ -38,9 +39,9 @@ exports.create_booking = asyncHandler(async (req, res) => {
         });
       }
 
-      const property = await prisma.SubAssetComponent.findFirst({
+      const property = await prisma.property.findFirst({
         where: {
-          id: data.subAssetCompId,
+          id: data.propertyId,
         },
         include: {
           owner: {
@@ -48,12 +49,11 @@ exports.create_booking = asyncHandler(async (req, res) => {
           },
         },
       });
-
+     
       const { id, name, phoneNumber } = createdUser;
       const bookingData = {
-        asset: { connect: { id: property.assetId } },
-        subAsset: { connect: { id: property.subAssetId } },
-        subAssetComponent: { connect: { id: data.subAssetCompId } },
+        property: { connect: { id: property.id } },
+        branch: { connect: { id: data.branchId } },
         owner: { connect: { id: property.ownerId } },
         table: { connect: { id: data.tableId } },
         customer: { connect: { id: id } },
@@ -68,7 +68,9 @@ exports.create_booking = asyncHandler(async (req, res) => {
         discount: data.discount ?? 0,
         grandTotal: data.grandTotal ?? 0,
         status: data.status ?? "CONFIRMED",
+        customerRequest: data.customerRequest ?? NULL
       };
+      // return res.status(200).send(bookingData);
       const booking = await prisma.Booking.create({
         data: bookingData,
       });
@@ -78,8 +80,8 @@ exports.create_booking = asyncHandler(async (req, res) => {
         if (process.env.SMS_TO_USER == 'true') {
           await helper.runSMSservice(encodeURI(message), phone_number);
         }
-        await prisma.Asset.update({
-          where: { id: booking.assetId },
+        await prisma.Branch.update({
+          where: { id: booking.branchId },
           data: {
             bookingCount: {
               increment: 1,
@@ -91,7 +93,7 @@ exports.create_booking = asyncHandler(async (req, res) => {
     });
     return res.status(200).send(result);
   } catch (error) {
-    return res.status(400).send(error);
+    return res.status(400).send(error.message);
   } finally {
     await prisma.$disconnect();
   }
