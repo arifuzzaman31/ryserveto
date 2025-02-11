@@ -233,13 +233,13 @@ exports.update_booking = asyncHandler(async (req, res) => {
         (prepareData.endDate = data.endDate
           ? new Date(data.endDate)
           : prepareData.endDate);
-      // if (data.tableId) {
-        // prepareData.tableId = data.tableId;
+      if (data.tableId) {
+        prepareData.tableId = data.tableId;
         if (data.status == "CONFIRMED" && prevasset.endDate > new Date()) {
           const chkBooking = await prisma.booking.findFirst({
             where: {
               propertyId: prevasset.propertyId,
-              // tableId: data.tableId,
+              tableId: data.tableId,
               startDate: prevasset.startDate,
               slot: data.slot,
             },
@@ -253,7 +253,7 @@ exports.update_booking = asyncHandler(async (req, res) => {
               });
           }
         }
-      // }
+      }
       delete prepareData["id"];
       delete prepareData["createdAt"];
       delete prepareData["property"];
