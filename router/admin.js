@@ -67,7 +67,8 @@ routes
   .get(property_controller.property_listwith_slot)
 
 routes
-  .route("/property/:id").all(adminMiddleware)
+  .route("/property/:id")
+  // .all(adminMiddleware)
   .get(property_controller.get_property)
   .put(property_controller.property_update)
   .delete(property_controller.delete_property);
