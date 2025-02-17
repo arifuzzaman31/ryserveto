@@ -84,6 +84,7 @@ exports.property_list = asyncHandler(async (req, res) => {
         logo: true,
         images: true,
         eventStatus: true,
+        sectSymb: true,
         reservationCategory: true,
         status: true
       },

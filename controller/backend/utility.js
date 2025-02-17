@@ -4,6 +4,8 @@ const ExcelJS = require("exceljs");
 const { slugify } = require("../../helper/helper");
 const { sendEmail } = require("../../services/emailService");
 
+const patternList = ['promotional-banner','banner-ads'];
+
 exports.upload_property = asyncHandler(async (req, res) => {
   try {
     const workbook = new ExcelJS.Workbook();
@@ -47,8 +49,7 @@ exports.create_section = asyncHandler(async (req, res) => {
   try {
     const result = await prisma.$transaction(async (prisma) => {
       const data = await req.body;
-      const sect = await prisma.section.create({
-        data: {
+      let readyData = {
           title: data.title,
           subtitle: data.subtitle,
           slug: slugify(data.title ?? data.pattern),
@@ -56,10 +57,14 @@ exports.create_section = asyncHandler(async (req, res) => {
           group: data.group,
           pattern: data.pattern,
           signature: Number(data.signature) || 0,
-          content: data.content,
           optionalData: data.optionalData,
           status: data.status == "true" ? true : false,
-        },
+        }
+        if(patternList.includes(data.pattern)){
+          readyData.content = data.content;
+        }
+      const sect = await prisma.section.create({
+        data: readyData
       });
       return sect;
     });
@@ -76,22 +81,25 @@ exports.section_update = asyncHandler(async (req, res) => {
     const id = parseInt(req.params.id, 10);
     const result = await prisma.$transaction(async (prisma) => {
       const data = await req.body;
+      let readyData = {
+        title: data.title,
+        subtitle: data.subtitle,
+        slug: slugify(data.title ?? data.pattern),
+        type: data.type,
+        group: data.group,
+        pattern: data.pattern,
+        signature: Number(data.signature) || 0,
+        optionalData: data.optionalData,
+        status: data.status == "true" ? true : false,
+      }
+      if(patternList.includes(data.pattern)){
+        readyData.content = data.content;
+      } else {readyData.content = NULL}
       const sect = await prisma.section.update({
         where: {
           id: id,
         },
-        data: {
-          title: data.title,
-          subtitle: data.subtitle,
-          slug: slugify(data.title ?? data.pattern),
-          type: data.type,
-          group: data.group,
-          pattern: data.pattern,
-          signature: data.signature,
-          content: data.content,
-          optionalData: data.optionalData,
-          status: data.status == "true" ? true : false,
-        },
+        data: readyData
       });
       return sect;
     });
