@@ -68,7 +68,7 @@ routes
 
 routes
   .route("/property/:id")
-  // .all(adminMiddleware)
+  .all(adminMiddleware)
   .get(property_controller.get_property)
   .put(property_controller.property_update)
   .delete(property_controller.delete_property);
@@ -135,6 +135,11 @@ routes
   .post(category_controller.create_category);
 
 routes
+  .route("/category/:id").all(adminMiddleware)
+  .put(category_controller.update_category)
+  .delete(category_controller.delete_category);
+
+routes
   .route("/food").all(adminMiddleware)
   .get(food_controller.food_list)
   .post(food_controller.create_food);
@@ -146,16 +151,16 @@ routes
     
   routes
     .route("/booking")
-    // .all(adminMiddleware)
+    .all(adminMiddleware)
     .get(booking_controller.get_all_booking)
     .post(booking_controller.create_booking);
 
 routes
     .route("/booking/:id")
-    // .all(adminMiddleware)
-//     .get(booking_controller.get_booking)
+    .all(adminMiddleware)
+    .get(booking_controller.get_booking)
     .put(booking_controller.update_booking)
-//     .delete(booking_controller.delete_booking);
+    .delete(booking_controller.delete_booking);
 
 // routes.get("/report",adminMiddleware,report_controller.get_report);
 // routes.get("/download-excel",adminMiddleware,report_controller.excel_download);

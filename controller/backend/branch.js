@@ -2,19 +2,24 @@ const asyncHandler = require("express-async-handler");
 const prisma = require("../../lib/db/prisma");
 const ownerService = require("../../services/ownerService");
 const helper = require("../../helper/helper");
+const { tableFaker } = require("../../lib/seeder/dataFaker");
 
 exports.create_branch = asyncHandler(async (req, res) => {
   const data = req.body;
   try {
     const result = await prisma.$transaction(async (prisma) => {
-      const ownerId = await ownerService.propertyBy(req.user);
+      const property = await prisma.Property.findFirst({
+        where: {
+          id: data.propertyId,
+        },
+      });
+      // let ownerId = await ownerService.propertyBy(req.user);
       let amenity = data.amenities?.map(itm => itm.name)
-      // return res.status(200).send(amenity);
       const branch = await prisma.branch.create({
         data: {
           branchName: data.branchName,
           slug: helper.slugify(data.branchName),
-          owner: {connect: {id: ownerId}},
+          owner: {connect: {id: property.ownerId}},
           property: {connect: {id: data.propertyId}},
           country: data.country,
           city: data.city,
@@ -32,8 +37,52 @@ exports.create_branch = asyncHandler(async (req, res) => {
           status: data.status == "true" ? true : false,
         },
       });
+
+      const table = await prisma.table.createMany({
+        data: [{
+          propertyId: property.id,
+          branchId: branch.id,
+          capacity: 12,
+          type: "KING",
+          position: "First Corner",
+          image:
+            "https://png.pngtree.com/thumb_back/fh260/background/20230706/pngtree-3d-render-of-the-interior-of-a-cozy-cafe-restaurant-image_3811953.jpg",
+          size: "66cm x 86cm",
+          splitable: true,
+          ryservable: false,
+          status: true,
+        },
+        {
+          propertyId: property.id,
+          branchId: branch.id,
+          capacity: 10,
+          type: "MEDIUM",
+          position: "Last Corner",
+          image:
+            "https://png.pngtree.com/thumb_back/fh260/background/20230706/pngtree-3d-render-of-the-interior-of-a-cozy-cafe-restaurant-image_3811953.jpg",
+          size: "62cm x 94cm",
+          splitable: true,
+          ryservable: false,
+          status: true,
+        },
+        {
+          propertyId: property.id,
+          branchId: branch.id,
+          capacity: 9,
+          type: "LARGE",
+          position: "Mid Corner",
+          image:
+            "https://png.pngtree.com/thumb_back/fh260/background/20230706/pngtree-3d-render-of-the-interior-of-a-cozy-cafe-restaurant-image_3811953.jpg",
+          size: "54cm x 74cm",
+          splitable: true,
+          ryservable: false,
+          status: true,
+        },
+      ],
+      });
       return branch;
     });
+    
     return res.status(201).send(result);
   } catch (error) {
     return res.status(400).send(error);
@@ -70,7 +119,10 @@ exports.branch_list = asyncHandler(async (req, res) => {
         createdAt: "desc",
       },
       select:{
-        id:true,branchName:true,propertyId:true,level:true,city:true,area:true,bookingCount:true,status:true
+        id:true,branchName:true,propertyId:true,level:true,city:true,area:true,bookingCount:true,status:true,
+        property:{
+          select: {id:true,listingName:true}
+        }
       }
     }),
   ]);
@@ -136,6 +188,7 @@ exports.branch_update = asyncHandler(async (req, res) => {
     await prisma.$disconnect();
   }
 });
+
 exports.delete_branch = asyncHandler(async (req, res) => {
   const id = parseInt(req.params.id, 10);
   const asset = await prisma.branch.update({

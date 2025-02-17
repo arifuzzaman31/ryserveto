@@ -38,7 +38,7 @@ exports.create_event = asyncHandler(async (req, res) => {
       });
       return events;
     });
-    return res.status(200).send(result);
+    return res.status(201).send(result);
   } catch (error) {
     return res.status(400).send(error.message);
   } finally {
@@ -56,7 +56,9 @@ exports.event_list = asyncHandler(async (req, res) => {
     }
     const perPg = perPage ? Number(perPage) : 10;
     const from = Number(pageNo * perPg) - Number(perPg);
-    const event = await prisma.Events.findMany({
+    const [count, events] = await prisma.$transaction([
+      prisma.Events.count({ where }),
+      prisma.Events.findMany({
       skip: pageNo ? from : 0,
       take: perPg,
       orderBy: {
@@ -66,43 +68,40 @@ exports.event_list = asyncHandler(async (req, res) => {
       select:{
         id:true,
         propertyId: true,
-        branchId: true,
         evtName:true,
         slug: true,
-        title:true,
-        subtitle: true,
-        location: true,
-        mapLocation:true,
+        startDate: true,
+        endDate: true,
         address:true,
+        capacity:true,
+        status:true,
         property:{
           select:{
             id:true,
             listingName:true,
-            type:true,
-            logo:true,
-            images:true,
           }
         },
         branch:{
           select:{
             id:true,
             branchName:true,
-            images:true,
-            area:true,
-            city:true,
-            country:true,
-            latitude:true,
-            longitude:true
           }
         }
       }
+    }),
+  ]);
+    return res.status(200).send({
+      pagination: {
+        total: Math.ceil(count / perPg),
+      },
+      data: events,
     });
-    return res.status(200).send(event);
 });
 
 exports.event_update = asyncHandler(async (req, res) => {
   const data = req.body;
   const id = parseInt(req.params.id,10);
+  // return res.status(200).send(data);
   try {
     const prevasset = await prisma.Events.findFirst({
       where: {
@@ -114,12 +113,14 @@ exports.event_update = asyncHandler(async (req, res) => {
     prepareData.endDate = data.endDate ? new Date(data.endDate) : prevasset.endDate;
     prepareData.slug = data.evtName ?  helper.slugify(data.evtName) : prevasset.slug;
     prepareData.status = data.status == "true" ? true : false;
-    prepareData.updatedBy = req.user?.id;
+    prepareData.updatedBy = req.user?.id || 0;
+    prepareData.capacity = data.capacity ? Number(data.capacity) :  Number(prepareData.capacity);
     prepareData.updatedAt = new Date();
 
     delete prepareData["id"];
     delete prepareData["createdAt"];
     delete prepareData["deletedAt"];
+    // return res.status(200).send(prepareData);
     const result = await prisma.$transaction(async (prisma) => {
       const event = await prisma.Events.update({
         where:{
@@ -155,6 +156,15 @@ exports.get_event = asyncHandler(async (req, res) => {
         location: true,
         mapLocation:true,
         address:true,
+        images:true,
+        capacity:true,
+        startDate:true,
+        endDate:true,
+        longitude:true,
+        latitude:true,
+        rules:true,
+        description:true,
+        status:true,
         property:{
           select:{
             id:true,

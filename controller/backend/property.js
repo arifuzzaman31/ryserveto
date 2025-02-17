@@ -6,8 +6,10 @@ const helper = require("../../helper/helper");
 exports.create_property = asyncHandler(async (req, res) => {
   const data = await req.body;
   try {
-    const ownerId = await ownerService.propertyBy(req.user);
-  
+    let ownerId = await ownerService.propertyBy(req.user);
+    if(data.ownerId){
+      ownerId = data.ownerId
+    }
     const result = await prisma.$transaction(async (prisma) => {
       const property = await prisma.Property.create({
         data: {
@@ -28,7 +30,8 @@ exports.create_property = asyncHandler(async (req, res) => {
           description: data.description,
           reservationCategory: data.reservationCategory,
           eventStatus: false,
-          status: data.status == "true" ? true : false
+          status: data.status == "true" ? true : false,
+          updatedBy: req.user?.id ?? 0
         }
       });
       return property;
@@ -59,7 +62,7 @@ exports.property_list = asyncHandler(async (req, res) => {
     req.user.userType == "BUSINESS_MANAGER" ||
     req.user.userType == "LISTING_MANAGER"
   ) {
-    where.assetId = req.user.assetId;
+    
   }
   const perPg = perPage ? Number(perPage) : 10;
   const from = Number(pageNo * perPg) - Number(perPg);
@@ -182,7 +185,6 @@ exports.property_update = asyncHandler(async (req, res) => {
 
     delete prepareData["id"];
     delete prepareData["ownerId"];
-    delete prepareData["table"];
     delete prepareData["createdAt"];
     delete prepareData["deletedAt"];
     const result = await prisma.$transaction(async (prisma) => {

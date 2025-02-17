@@ -1,8 +1,10 @@
 const asyncHandler = require("express-async-handler");
 const prisma = require("../../lib/db/prisma");
+const ownerService = require("../../services/ownerService");
 
 exports.create_food = asyncHandler(async (req, res) => {
   const data = await req.body;
+  // return res.status(200).send(data);
   try {
     const result = await prisma.$transaction(async (prisma) => {
       const foods = await prisma.Food.create({
@@ -10,11 +12,11 @@ exports.create_food = asyncHandler(async (req, res) => {
             categoryId: data.categoryId,
             name: data.name,
             images: data.images,
-            rating: data.rating,
+            rating: Number(data.rating) ?? 0,
             propertyId: data.propertyId,
             price: data.price,
             description: data.description,
-            optionalData: data.optionalData,
+            // optionalData: data.optionalData,
             status: data.status == "true" ? true : false,
         },
       });
@@ -29,20 +31,59 @@ exports.create_food = asyncHandler(async (req, res) => {
 });
 
 exports.food_list = asyncHandler(async (req, res) => {
-  const { status } = await req.query;
-  let where = {};
-  if (status) {
-    where = {
-      status: true,
-    };
-  }
-  const food = await prisma.Food.findMany({
-    orderBy: {
-      createdAt: "desc",
+  const { pageNo, perPage, status, keyword } = req.query;
+    const dataId = await ownerService.propertyBy(await req.user);
+    let where = {};
+    if (dataId != "all") {
+      where.ownerId = dataId;
+    }
+
+    if (status) {
+      where.status = true;
+    }
+    if (keyword) {
+      where.name = {
+        contains: keyword,
+        mode: "insensitive",
+      };
+    }
+    if (
+      req.user.userType == "BUSINESS_MANAGER" ||
+      req.user.userType == "LISTING_MANAGER"
+    ) {
+      
+    }
+    const perPg = perPage ? Number(perPage) : 10;
+    const from = Number(pageNo * perPg) - Number(perPg);
+    const [count, foods] = await prisma.$transaction([
+      prisma.Food.count({ where }),
+      prisma.Food.findMany({
+        skip: pageNo ? from : 0,
+        take: perPg,
+        where,
+        orderBy: {
+          id: "desc",
+        },
+        select: {
+          id: true,
+          name: true,
+          categoryId: true,
+          images: true,
+          propertyId: true,
+          price: true,
+          description: true,
+          status: true,
+          category:{select:{id:true,categoryName:true}},
+          property:{select:{id:true,listingName:true}}
+        },
+      }),
+    ]);
+  return res.status(200).send({
+    pagination: {
+      total: Math.ceil(count / perPg),
     },
-    where,
+    data: foods,
   });
-  return res.status(200).send(food);
 });
 
 exports.update_food = asyncHandler(async (req, res) => {

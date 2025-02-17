@@ -43,7 +43,7 @@ exports.create_emp_own = asyncHandler(async (req, res) => {
 });
 
 exports.emp_list = asyncHandler(async (req, res) => {
-  const { pageNo, perPage, vendor } = await req.query;
+  const { pageNo, perPage, vendor } = req.query;
   const dataId = await ownerService.propertyBy(req.user);
   const where = {};
 
@@ -74,11 +74,11 @@ exports.emp_list = asyncHandler(async (req, res) => {
       },
       select:{
         id:true,name:true,email:true,phoneNumber:true,userType:true,status:true,roleId:true,
-        roles:{select:{
-          id:true,roleName:true,
-          asset: { select: { id: true, propertyName: true }
-          },
-        }}
+        // roles:{select:{
+        //   id:true,roleName:true,
+        //   asset: { select: { id: true, propertyName: true }
+        //   },
+        // }}
       }
     }),
   ]);
