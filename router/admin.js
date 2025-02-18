@@ -150,6 +150,10 @@ routes
     .get(food_controller.get_food)
     .put(food_controller.update_food);
     
+routes
+    .route("/food-price")
+    .put(food_controller.food_price_update)
+
   routes
     .route("/booking")
     .all(adminMiddleware)

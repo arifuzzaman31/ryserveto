@@ -35,7 +35,7 @@ exports.food_list = asyncHandler(async (req, res) => {
     const dataId = await ownerService.propertyBy(await req.user);
     let where = {};
     if (dataId != "all") {
-      where.ownerId = dataId;
+      where.property = {ownerId : dataId};
     }
 
     if (status) {
@@ -107,6 +107,30 @@ exports.update_food = asyncHandler(async (req, res) => {
             status: data.status == "true" ? true : false,
             updatedAt:new Date(),
             updatedBy: req.user?.id
+        },
+      });
+      return foods;
+    });
+    return res.status(200).send(result);
+  } catch (error) {
+    return res.status(400).send(error.message);
+  } finally {
+    await prisma.$disconnect();
+  }
+});
+
+exports.food_price_update = asyncHandler(async (req, res) => {
+  const data = await req.body;
+  try {
+    const result = await prisma.$transaction(async (prisma) => {
+      const foods = await prisma.Food.updateMany({
+        where: {
+          status: true,
+        },
+        data: {
+            price: data.price,
+            status: true,
+            updatedAt:new Date(),
         },
       });
       return foods;

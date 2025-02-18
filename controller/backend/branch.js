@@ -2,7 +2,6 @@ const asyncHandler = require("express-async-handler");
 const prisma = require("../../lib/db/prisma");
 const ownerService = require("../../services/ownerService");
 const helper = require("../../helper/helper");
-const { tableFaker } = require("../../lib/seeder/dataFaker");
 
 exports.create_branch = asyncHandler(async (req, res) => {
   const data = req.body;
@@ -13,7 +12,6 @@ exports.create_branch = asyncHandler(async (req, res) => {
           id: data.propertyId,
         },
       });
-      // let ownerId = await ownerService.propertyBy(req.user);
       let amenity = data.amenities?.map(itm => itm.name)
       const branch = await prisma.branch.create({
         data: {
@@ -36,49 +34,6 @@ exports.create_branch = asyncHandler(async (req, res) => {
           terms: data.terms,
           status: data.status == "true" ? true : false,
         },
-      });
-
-      const table = await prisma.table.createMany({
-        data: [{
-          propertyId: property.id,
-          branchId: branch.id,
-          capacity: 12,
-          type: "KING",
-          position: "First Corner",
-          image:
-            "https://png.pngtree.com/thumb_back/fh260/background/20230706/pngtree-3d-render-of-the-interior-of-a-cozy-cafe-restaurant-image_3811953.jpg",
-          size: "66cm x 86cm",
-          splitable: true,
-          ryservable: false,
-          status: true,
-        },
-        {
-          propertyId: property.id,
-          branchId: branch.id,
-          capacity: 10,
-          type: "MEDIUM",
-          position: "Last Corner",
-          image:
-            "https://png.pngtree.com/thumb_back/fh260/background/20230706/pngtree-3d-render-of-the-interior-of-a-cozy-cafe-restaurant-image_3811953.jpg",
-          size: "62cm x 94cm",
-          splitable: true,
-          ryservable: false,
-          status: true,
-        },
-        {
-          propertyId: property.id,
-          branchId: branch.id,
-          capacity: 9,
-          type: "LARGE",
-          position: "Mid Corner",
-          image:
-            "https://png.pngtree.com/thumb_back/fh260/background/20230706/pngtree-3d-render-of-the-interior-of-a-cozy-cafe-restaurant-image_3811953.jpg",
-          size: "54cm x 74cm",
-          splitable: true,
-          ryservable: false,
-          status: true,
-        },
-      ],
       });
       return branch;
     });
