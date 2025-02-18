@@ -409,6 +409,7 @@ model Evbooking {
   email        String?
   address      String?
   ticketNumber String?
+  customerRequest String?
   person       Int           @default(1)
   price        Int           @default(0)
   amount       Float         @default(0.0)

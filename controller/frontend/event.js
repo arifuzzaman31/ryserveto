@@ -147,11 +147,12 @@ exports.event_booking = asyncHandler(async (req, res) => {
       bookingStatus: data.bookingStatus ?? "ON_HOLD",
       discount: data.discount ?? 0,
       optionalData: data.menuData,
+      issueAt: new Date(),
       status: data.status == 'true' ? true : false
     };
-    if(data.issueAt){
-      bookingData.issueAt = new Date(data.issueAt)
-    }
+    // if(data.issueAt){
+    //   bookingData.issueAt = new Date(data.issueAt)
+    // } else { bookingData.issueAt = new Date() }
     const booking = await prisma.Evbooking.create({
         data: bookingData,
     });

@@ -68,7 +68,7 @@ exports.create_booking = asyncHandler(async (req, res) => {
         discount: data.discount ?? 0,
         grandTotal: data.grandTotal ?? 0,
         status: data.status ?? "CONFIRMED",
-        customerRequest: data.customerRequest ?? NULL
+        customerRequest: data.customerRequest ?? ''
       };
       // return res.status(200).send(bookingData);
       const booking = await prisma.Booking.create({

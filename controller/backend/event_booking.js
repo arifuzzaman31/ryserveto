@@ -8,24 +8,13 @@ exports.create_evt_booking = asyncHandler(async (req, res) => {
   try {
     const data = await req.body;
     const result = await prisma.$transaction(async (prisma) => {
-      const chkBooking = await prisma.Evbooking.findFirst({
-        where: {
-          propertyId: data.propertyId,
-          tableId: data.tableId,
-          branchId: data.branchId,
-          startDate: new Date(data.startDate),
-          slot: data.slot,
-        },
-      });
-      if (chkBooking) {
-        return res.status(400).send({ message: "This Slot Already Booked!" });
-      }
+
       let createdUser = await userService.get_user({
         phoneNumber: data.user?.phoneNumber,
       });
       if (!createdUser) {
         const demoMail =
-          "user" + Math.floor(Math.random() * 10000) + "@fakemail.com";
+          data.user?.email ?? "user" + Math.floor(Math.random() * 10000) + "@fakemail.com";
         createdUser = await prisma.user.create({
           data: {
             email: demoMail,
@@ -39,36 +28,33 @@ exports.create_evt_booking = asyncHandler(async (req, res) => {
         });
       }
 
-      const property = await prisma.property.findFirst({
+      const event = await prisma.Events.findFirst({
         where: {
-          id: data.propertyId,
-        },
-        include: {
-          owner: {
-            select: { id: true, phoneNumber: true },
-          },
-        },
+          id: data.eventId,
+        }
       });
      
-      const { id, name, phoneNumber } = createdUser;
+      const { id, name, email, phoneNumber } = createdUser;
       const bookingData = {
-        property: { connect: { id: property.id } },
-        branch: { connect: { id: data.branchId } },
-        owner: { connect: { id: property.ownerId } },
-        table: { connect: { id: data.tableId } },
         customer: { connect: { id: id } },
-        customerName: name ?? data.user.lastName,
-        phoneNumber: phoneNumber ?? data.user.phoneNumber,
-        startDate: new Date(data.startDate),
-        endDate: new Date(data.endDate),
-        slot: data.slot,
-        guestNumber: data.guestNumber ?? 1,
+        event: { connect: { id: data.eventId } },
+        username: name,
+        phoneNumber: phoneNumber,
+        email: email,
+        address: data.address,
+        eventDate: new Date(event.startDate),
+        person: data.person,
+        ticketNumber: data.ticketNumber ?? '',
+        price: data.price ?? 0,
         amount: data.amount ?? 0,
         vat: data.vat ?? 0,
+        payStatus: data.payStatus ?? "UNPAID",
+        bookingStatus: data.bookingStatus ?? "ON_HOLD",
         discount: data.discount ?? 0,
-        grandTotal: data.grandTotal ?? 0,
-        status: data.status ?? "CONFIRMED",
-        customerRequest: data.customerRequest ?? NULL
+        // optionalData: data.menuData,
+        issueAt: new Date(),
+        customerRequest: data.customerRequest,
+        status: true
       };
       // return res.status(200).send(bookingData);
       const booking = await prisma.Evbooking.create({
@@ -76,18 +62,10 @@ exports.create_evt_booking = asyncHandler(async (req, res) => {
       });
       if (booking) {
         let phone_number = "88" + phoneNumber;
-        let message = "Thank you.\nYour reservation is Confirmed.";
+        let message = "Thank you.\nYour Event Booking is Confirmed.";
         if (process.env.SMS_TO_USER == 'true') {
           await helper.runSMSservice(encodeURI(message), phone_number);
         }
-        await prisma.Branch.update({
-          where: { id: booking.branchId },
-          data: {
-            bookingCount: {
-              increment: 1,
-            },
-          },
-        });
       }
       return booking;
     });
@@ -191,46 +169,14 @@ exports.update_evt_booking = asyncHandler(async (req, res) => {
           },
         },
       });
-      if (data.status == "COMPLETED" && prevasset.endDate > new Date()) {
-        return res
-          .status(500)
-          .send({
-            status: "error",
-            message:
-              "The completion status is not allowed because the reservation date has not yet ended.!",
-          });
-      }
       const prepareData = { ...prevasset, ...data };
-      (prepareData.startDate = data.startDate
-        ? new Date(data.startDate)
-        : prepareData.startDate),
-        (prepareData.endDate = data.endDate
-          ? new Date(data.endDate)
-          : prepareData.endDate);
-      if (data.tableId) {
-        prepareData.tableId = data.tableId;
-        if (data.status == "CONFIRMED" && prevasset.endDate > new Date()) {
-          const chkBooking = await prisma.Evbooking.findFirst({
-            where: {
-              propertyId: prevasset.propertyId,
-              tableId: data.tableId,
-              startDate: prevasset.startDate,
-              slot: data.slot,
-            },
-          });
-          if (chkBooking) {
-            return res
-              .status(500)
-              .send({
-                status: "error",
-                message: "This Slot Already Assigned in this Time!",
-              });
-          }
-        }
-      }
+      prepareData.eventDate = data.eventDate ? new Date(data.eventDate): prepareData.eventDate
+      prepareData.customerRequest = data.customerRequest ?? prepareData.customerRequest
       delete prepareData["id"];
-      delete prepareData["createdAt"];
-      delete prepareData["property"];
+      delete prepareData["customerId"];
+      delete prepareData["optionalData"];
+      delete prepareData["event"];
+      delete prepareData["user"];
       delete prepareData["deletedAt"];
       // return res.status(200).send(prepareData);
       const booking = await prisma.Evbooking.update({
@@ -240,18 +186,12 @@ exports.update_evt_booking = asyncHandler(async (req, res) => {
         data: prepareData,
       });
       if (booking) {
-        const customDate = await helper.formattedDate(booking.startDate);
+        const customDate = await helper.formattedDate(booking.eventDate);
         let phone_number = "88" + prevasset.phoneNumber;
         let message;
-        if (data.status == "CONFIRMED" || data.status == "CANCELED") {
-          let text = data.status.toLowerCase();
-          message = `Reservation under ${prevasset.customerName} at ${prevasset.property.listingName} is ${text} for ${customDate} at ${booking.slot}.\nFor support, contact 01923283543`;
-          if (process.env.SMS_TO_USER == 'true') {
-            await helper.runSMSservice(encodeURI(message), phone_number);
-          }
-        }
-        if (data.slot != prevasset.slot) {
-          message = `Your reservation slot is updated from ${prevasset.slot} to ${data.slot}.\nFor support, contact 01923283543`;
+        if (data.bookingStatus == "CONFIRMED" || data.bookingStatus == "CANCELED") {
+          let text = data.bookingStatus.toLowerCase();
+          message = `Reservation under ${prevasset.username} at ${prevasset.event?.evtName} is ${text} for ${customDate} .\nFor support, contact 01923283543`;
           if (process.env.SMS_TO_USER == 'true') {
             await helper.runSMSservice(encodeURI(message), phone_number);
           }

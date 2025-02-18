@@ -94,7 +94,7 @@ exports.section_update = asyncHandler(async (req, res) => {
       }
       if(patternList.includes(data.pattern)){
         readyData.content = data.content;
-      } else {readyData.content = NULL}
+      }
       const sect = await prisma.section.update({
         where: {
           id: id,
