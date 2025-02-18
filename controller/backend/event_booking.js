@@ -100,7 +100,7 @@ exports.create_evt_booking = asyncHandler(async (req, res) => {
 });
 
 exports.get_all_evt_booking = asyncHandler(async (req, res) => {
-  const { pageNo, perPage, status, startDate, endDate, keyword } = req.query;
+  const { pageNo, perPage, status, issueAt, keyword } = req.query;
   // const dataId = await ownerService.propertyBy(req.user);
   let where = {};
   // if (dataId != "all") {
@@ -113,7 +113,7 @@ exports.get_all_evt_booking = asyncHandler(async (req, res) => {
   //   where.assetId = req.user.assetId;
   // }
   where.deletedAt = null;
-  if (status) where.status = status;
+  if (status) where.bookingStatus = status;
   // if (propertyId) where.propertyId = propertyId;
   // if (event) {
   //   if (event == "Regular") {
@@ -126,17 +126,15 @@ exports.get_all_evt_booking = asyncHandler(async (req, res) => {
   // }
   if(keyword){
     where.OR = [
-      { customerName: { contains: keyword, mode: "insensitive" } },
+      { username: { contains: keyword, mode: "insensitive" } },
       { phoneNumber: { contains: keyword, mode: "insensitive" } },
       { event: { evtName: { contains: keyword, mode: "insensitive" } } }
     ];
   }
-  if (startDate && endDate) {
-    where.startDate = {
-      gte: new Date(startDate),
-      lte: new Date(endDate),
-    };
+  if (issueAt) {
+    where.issueAt =  new Date(issueAt);
   }
+  // return res.status(200).send(where);
   const perPg = perPage ? Number(perPage) : 10;
   const from = Number(pageNo * perPg) - Number(perPg);
   const [count, bookings] = await prisma.$transaction([
