@@ -89,6 +89,7 @@ exports.section_update = asyncHandler(async (req, res) => {
         group: data.group,
         pattern: data.pattern,
         signature: Number(data.signature) || 0,
+        precedency: Number(data.precedency) || 0,
         optionalData: data.optionalData,
         status: data.status == "true" ? true : false,
       }
@@ -119,6 +120,7 @@ exports.section_list = asyncHandler(async (req, res) => {
     };
     let where = {
       group: group,
+      deletedAt: null
     };
     const perPg = perPage ? Number(perPage) : 10;
     const from = Number(pageNo * perPg) - Number(perPg);
@@ -154,6 +156,7 @@ exports.section_destroy = asyncHandler(async (req, res) => {
         },
         data: {
           deletedAt: new Date(),
+          status: false,
           updatedBy: req.user?.id,
         },
       });
