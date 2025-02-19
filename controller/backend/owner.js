@@ -45,7 +45,9 @@ exports.create_emp_own = asyncHandler(async (req, res) => {
 exports.emp_list = asyncHandler(async (req, res) => {
   const { pageNo, perPage, vendor } = req.query;
   const dataId = await ownerService.propertyBy(req.user);
-  const where = {};
+  const where = {
+    deletedAt: null
+  };
 
   if (dataId !== "all") {
     where.ownerId = dataId;

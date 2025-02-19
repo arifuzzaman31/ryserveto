@@ -18,7 +18,7 @@ exports.create_booking = asyncHandler(async (req, res) => {
         },
       });
       if (chkBooking) {
-        return res.status(400).send({ message: "This Slot Already Booked!" });
+        throw new Error("This Slot Already Booked!");
       }
       let createdUser = await userService.get_user({
         phoneNumber: data.user?.phoneNumber,
@@ -218,13 +218,7 @@ exports.update_booking = asyncHandler(async (req, res) => {
         },
       });
       if (data.status == "COMPLETED" && prevasset.endDate > new Date()) {
-        return res
-          .status(500)
-          .send({
-            status: "error",
-            message:
-              "The completion status is not allowed because the reservation date has not yet ended.!",
-          });
+        throw new Error("The completion status is not allowed because the reservation date has not yet ended.!");
       }
       const prepareData = { ...prevasset, ...data };
       (prepareData.startDate = data.startDate
@@ -245,12 +239,7 @@ exports.update_booking = asyncHandler(async (req, res) => {
             },
           });
           if (chkBooking) {
-            return res
-              .status(500)
-              .send({
-                status: "error",
-                message: "This Slot Already Assigned in this Time!",
-              });
+            throw new Error("This Slot Already Assigned in this Time!");
           }
         }
       }
@@ -287,7 +276,7 @@ exports.update_booking = asyncHandler(async (req, res) => {
     });
     return res.status(200).send(result);
   } catch (error) {
-    return res.status(400).send(error);
+    return res.status(400).json({ error: error.message });
   } finally {
     await prisma.$disconnect();
   }
