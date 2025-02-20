@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const prisma = require("../../db/prisma");
+const prisma = require("../../lib/db/prisma");
 const ownerService = require("../../services/ownerService")
 const ExcelJS = require("exceljs");
 
@@ -11,7 +11,7 @@ exports.get_report = asyncHandler(async (req, res) => {
        where.ownerId= dataId
     }
     if ((req.user.userType == 'BUSINESS_MANAGER') || (req.user.userType == 'LISTING_MANAGER')) {
-        where.assetId = req.user.assetId
+        // where.assetId = req.user.assetId
     }
     if(status) where.status = status
     if(event){ 
@@ -47,7 +47,7 @@ exports.get_report = asyncHandler(async (req, res) => {
                         id:true,name:true,phoneNumber:true
                     }
                 },
-                subAssetComponent: {
+                property: {
                     select: {
                         id:true,listingName:true,type:true,reservationCategory:true
                     }
@@ -137,7 +137,7 @@ async function generateExcelData(user,from,status) {
                     id:true,name:true,phoneNumber:true
                 }
             },
-            subAssetComponent: {
+            property: {
                 select: {
                     id:true,listingName:true,type:true,reservationCategory:true
                 }

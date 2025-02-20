@@ -16,7 +16,7 @@ const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 const booking_controller = require("../controller/backend/booking");
 const evt_booking_ctrl = require("../controller/backend/event_booking");
-// const report_controller = require("../controller/backend/report");
+const report_controller = require("../controller/backend/report");
 const dashboard_controller = require("../controller/backend/dashboard");
 const adminMiddleware = require("../middleware/adminMiddleware");
 
@@ -180,8 +180,8 @@ routes
     .put(evt_booking_ctrl.update_evt_booking)
     .delete(evt_booking_ctrl.delete_evt_booking);
 
-// routes.get("/report",adminMiddleware,report_controller.get_report);
-// routes.get("/download-excel",adminMiddleware,report_controller.excel_download);
+routes.get("/report",adminMiddleware,report_controller.get_report);
+routes.get("/download-excel",adminMiddleware,report_controller.excel_download);
 
 routes.get("/sales-data",adminMiddleware,dashboard_controller.sales_data);
 routes.get("/status-slot-data",adminMiddleware,dashboard_controller.status_data);
