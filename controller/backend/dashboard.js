@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const prisma = require('../../db/prisma');
+const prisma = require("../../lib/db/prisma");
 const helper = require('../../helper/helper')
 const ownerService = require('../../services/ownerService')
 
@@ -11,7 +11,7 @@ exports.sales_data = asyncHandler(async(req,res) => {
        where.ownerId= dataId
     }
     if ((req.user.userType == 'BUSINESS_MANAGER') || (req.user.userType == 'LISTING_MANAGER')) {
-        where.assetId = req.user.assetId
+        // where.assetId = req.user.assetId
     }
     const filteredDocuments = await prisma.Booking.findMany({
         where,
@@ -102,7 +102,7 @@ exports.status_data = asyncHandler(async(req,res) => {
        where.ownerId= dataId
     }
     if ((req.user.userType == 'BUSINESS_MANAGER') || (req.user.userType == 'LISTING_MANAGER')) {
-        where.assetId = req.user.assetId
+        // where.assetId = req.user.assetId
     }
     let ttdays = 30
     let today = new Date();
@@ -182,9 +182,9 @@ exports.owner_list = asyncHandler(async(req,res) => {
        where.ownerId= dataId
     }
     if ((req.user.userType == 'BUSINESS_MANAGER') || (req.user.userType == 'LISTING_MANAGER')) {
-        where.assetId = req.user.assetId
+        // where.assetId = req.user.assetId
     }
-    const ownerData = await prisma.SubAssetComponent.findMany({
+    const ownerData = await prisma.Property.findMany({
         where,
         skip:0,take:5,
         orderBy: {
@@ -192,17 +192,10 @@ exports.owner_list = asyncHandler(async(req,res) => {
         },
         select: {
             id: true,
-            assetId: true,
             ownerId: true,
             listingName: true,
+            logo: true,
             status: true,
-            asset: {
-                select: {
-                    id: true,
-                    propertyName: true,
-                    logo: true
-                }
-            },
             owner: {
                 select: {
                     id: true,
@@ -225,7 +218,7 @@ exports.state_data = asyncHandler(async(req,res) => {
        where.ownerId= dataId
     }
     if ((req.user.userType == 'BUSINESS_MANAGER') || (req.user.userType == 'LISTING_MANAGER')) {
-        where.assetId = req.user.assetId
+        // where.assetId = req.user.assetId
     }
     const totalCount = await prisma.Booking.aggregate({
         where,
@@ -234,7 +227,7 @@ exports.state_data = asyncHandler(async(req,res) => {
             grandTotal: true
         }
     });
-    const countRestaurant = await prisma.SubAssetComponent.count({
+    const countRestaurant = await prisma.Property.count({
         where:{
             ...where,
             type: 'RESTAURANT'

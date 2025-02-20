@@ -17,7 +17,7 @@ const upload = multer({ dest: 'uploads/' });
 const booking_controller = require("../controller/backend/booking");
 const evt_booking_ctrl = require("../controller/backend/event_booking");
 // const report_controller = require("../controller/backend/report");
-// const dashboard_controller = require("../controller/backend/dashboard");
+const dashboard_controller = require("../controller/backend/dashboard");
 const adminMiddleware = require("../middleware/adminMiddleware");
 
 routes.post("/login", auth_controller.attempt_to_login);
@@ -183,9 +183,9 @@ routes
 // routes.get("/report",adminMiddleware,report_controller.get_report);
 // routes.get("/download-excel",adminMiddleware,report_controller.excel_download);
 
-// routes.get("/sales-data",adminMiddleware,dashboard_controller.sales_data);
-// routes.get("/status-slot-data",adminMiddleware,dashboard_controller.status_data);
-// routes.get("/owner-list",adminMiddleware,dashboard_controller.owner_list);
-// routes.get("/state-data",adminMiddleware,dashboard_controller.state_data);
+routes.get("/sales-data",adminMiddleware,dashboard_controller.sales_data);
+routes.get("/status-slot-data",adminMiddleware,dashboard_controller.status_data);
+routes.get("/owner-list",adminMiddleware,dashboard_controller.owner_list);
+routes.get("/state-data",adminMiddleware,dashboard_controller.state_data);
 
 module.exports = routes;

@@ -28,6 +28,7 @@ exports.create_property = asyncHandler(async (req, res) => {
           terms: data.terms,
           cuisines: data.cuisines,
           description: data.description,
+          optionalData: data.optionalData,
           reservationCategory: data.reservationCategory,
           eventStatus: false,
           status: data.status == "true" ? true : false,
