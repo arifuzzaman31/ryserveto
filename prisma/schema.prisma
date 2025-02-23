@@ -96,7 +96,6 @@ model RolePermission {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   updatedBy   Int       @default(0)
-
   @@index([roleName])
 }
 

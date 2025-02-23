@@ -223,15 +223,26 @@ exports.delete_property = asyncHandler(async (req, res) => {
 exports.property_signature = asyncHandler(async(req,res) => {
   try {
     const data = req.body;
-    const property = await prisma.Property.updateMany({
-      where: {
-        id: { in: data.ids }
-      },
-      data: {
-        sectSymb: data.signature
-      },
+    const result = await prisma.$transaction(async (prisma) => {
+      const resetPrev = await prisma.Property.updateMany({
+        where: {
+          sectSymb: data.signature
+        },
+        data: {
+          sectSymb: 0
+        },
+      });
+      const property = await prisma.Property.updateMany({
+        where: {
+          id: { in: data.ids }
+        },
+        data: {
+          sectSymb: data.signature
+        },
+      });
+      return property;
     });
-    return res.status(200).send(property);
+    return res.status(200).send(result);
 
   } catch (error) {
     return res.status(500).send({ details: error.message });

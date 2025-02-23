@@ -46,6 +46,18 @@ exports.role_list = asyncHandler(async (req, res) => {
       orderBy: {
         createdAt: "desc",
       },
+      select:{
+        id:true,
+        roleName:true,
+        permissions:true,
+        branchId:true,
+        status:true,
+        branch:{
+          select:{
+            id:true, branchName:true,ownerId:true
+          }
+        },
+      }
     }),
   ]);
 
