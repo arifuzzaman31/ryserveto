@@ -100,6 +100,7 @@ exports.get_property = asyncHandler(async (req, res) => {
         position: true,
         status: true,
         eventStatus: true,
+        optionalData: true,
         event:{select:{id:true}},
         branches: {
           select: {
@@ -195,6 +196,7 @@ exports.get_branch_property = asyncHandler(async (req, res) => {
           offday: true,
           position: true,
           status: true,
+          optionalData: true,
           food: {
             select: {
               id: true,
@@ -276,6 +278,7 @@ exports.branch_property = asyncHandler(async (req, res) => {
           terms: true,
           offday: true,
           position: true,
+          optionalData: true,
           status: true,
           food: {
             select: {
@@ -388,6 +391,7 @@ exports.branch_list_property = asyncHandler(async (req, res) => {
             images: true,
             reservationCategory: true,
             sectSymb: true,
+            optionalData: true,
             status: true,
           },
         },
