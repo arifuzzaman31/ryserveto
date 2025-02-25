@@ -40,6 +40,7 @@ async function sendEmail(details) {
         context: {
           username: details.username,
           date: details.date,
+          slot: details.date,
           address: details.address
         }
     });

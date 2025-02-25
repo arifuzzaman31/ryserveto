@@ -176,6 +176,7 @@ exports.sendtestmail = asyncHandler(async (req, res) => {
     subject: "Welcome! You will be vanished",
     username: "Modusudon",
     date: new Date(),
+    slot: "2 PM",
     address: "Level 9, Road 4, Gulshan 1, Dhaka",
   };
   const data = await sendEmail(details);
