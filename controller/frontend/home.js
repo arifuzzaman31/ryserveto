@@ -7,7 +7,7 @@ exports.home_list = asyncHandler(async (req, res) => {
     precedency: "asc",
   };
   let where = {
-    group: group,
+    // group: group,
     status: true,
     deletedAt: null,
   };
