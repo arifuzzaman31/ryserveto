@@ -166,6 +166,7 @@ exports.delete_food = asyncHandler(async (req, res) => {
       },
       data: {
         deletedAt: new Date(),
+        status: false,
         updatedBy: req.user?.id
       },
     });

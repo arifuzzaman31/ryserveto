@@ -104,9 +104,12 @@ exports.property_list = asyncHandler(async (req, res) => {
 });
 
 exports.property_listwith_slot = asyncHandler(async (req, res) => {
-  const { pageNo, perPage } = req.query;
+  const { pageNo, perPage, status } = req.query;
   // const dataId = await ownerService.propertyBy(await req.user);
   let where = {};
+  if (status) {
+    where.status = true;
+  }
   // if (dataId != "all") {
   //   where.ownerId = dataId;
   // }
