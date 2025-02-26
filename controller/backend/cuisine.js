@@ -22,7 +22,7 @@ exports.create_cuisine = asyncHandler(async (req, res) => {
 });
 
 exports.cuisine_list = asyncHandler(async (req, res) => {
-  const { status } = await req.query;
+  const { status } = req.query;
   let where = {};
   if (status) {
     where = {

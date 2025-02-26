@@ -46,11 +46,14 @@ exports.create_property = asyncHandler(async (req, res) => {
 });
 
 exports.property_list = asyncHandler(async (req, res) => {
-  const { pageNo, perPage } = req.query;
+  const { pageNo, perPage, status } = req.query;
   const dataId = await ownerService.propertyBy(await req.user);
   let where = {};
   if (dataId != "all") {
     where.ownerId = dataId;
+  }
+  if (status) {
+    where.status = true;
   }
   const { keyword } = req.query;
   if (keyword) {

@@ -3,7 +3,9 @@ const prisma = require("../../lib/db/prisma");
 
 exports.property_list = asyncHandler(async (req, res) => {
   const { pageNo, perPage, signature, group } = req.query;
-  let where = {};
+  let where = {
+    status:true
+  };
   if (signature) {
     where.sectSymb = parseInt(signature, 10);
   }
@@ -103,6 +105,7 @@ exports.get_property = asyncHandler(async (req, res) => {
         optionalData: true,
         event:{select:{id:true}},
         branches: {
+          where:{status: true},
           select: {
             id: true,
             propertyId: true,
@@ -122,6 +125,7 @@ exports.get_property = asyncHandler(async (req, res) => {
             status: true,
             longitude: true,
             tables: {
+              where:{status: true},
               select: {
                 id: true,
                 branchId: true,
@@ -135,9 +139,10 @@ exports.get_property = asyncHandler(async (req, res) => {
               },
             },
           },
-          // take:1
+          // take:2
         },
         food: {
+          where:{status: true},
           select: {
             id: true,
             name: true,
@@ -555,7 +560,9 @@ async function whereBranchMaker(query) {
 
 async function whereMaker(tp,query) {
   const { date, position, seating, cuisine, area, byName } = query;
-  let where = {};
+  let where = {
+    status:true
+  };
   if (cuisine) {
     const cuisine_arr = cuisine.split("_");
     where.cuisines = { hasSome: cuisine_arr };

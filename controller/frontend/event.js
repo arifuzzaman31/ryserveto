@@ -3,7 +3,9 @@ const prisma = require("../../lib/db/prisma");
 
 exports.event_list = asyncHandler(async (req, res) => {
     const { pageNo, perPage, signature, group } = req.query;
-    let where = {};
+    let where = {
+      status:true
+    };
     let orCondition = []
     if (signature) {
         where.property = {sectSymb:parseInt(signature, 10)};

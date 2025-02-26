@@ -52,6 +52,9 @@ exports.table_list = asyncHandler(async (req, res) => {
     prisma.Table.findMany({
       skip: pageNo ? from : 0,
       take: perPg,
+      orderBy: {
+        createdAt: "desc",
+      },
       where: {
         ...condition,
         property: {

@@ -26,7 +26,7 @@ exports.create_category = asyncHandler(async (req, res) => {
 });
 
 exports.category_list = asyncHandler(async (req, res) => {
-  const { status } = await req.query;
+  const { status } = req.query;
   let where = {};
   if (status) {
     where = {

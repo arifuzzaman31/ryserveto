@@ -77,3 +77,16 @@ exports.foodCategory_list = asyncHandler(async (req, res) => {
     return res.status(400).send(error.message);
   }
 });
+
+exports.cuisine_list = asyncHandler(async (req, res) => {
+  let where = {
+    status: true
+  };
+  const cuisine = await prisma.cuisine.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+    where,
+  });
+  return res.status(200).send(cuisine);
+});

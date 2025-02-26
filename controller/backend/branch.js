@@ -47,10 +47,13 @@ exports.create_branch = asyncHandler(async (req, res) => {
 });
 
 exports.branch_list = asyncHandler(async (req, res) => {
-  const { pageNo, perPage } = req.query;
+  const { pageNo, perPage, status } = req.query;
   const reqUser = await req.user;
   const dataId = await ownerService.propertyBy(reqUser);
   let where = {};
+  if (status) {
+     where.status = true
+  }
   if (dataId != "all") {
     where = {
       ownerId: dataId,
