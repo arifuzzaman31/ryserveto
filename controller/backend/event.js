@@ -128,6 +128,25 @@ exports.event_update = asyncHandler(async (req, res) => {
         },
         data:prepareData,
       });
+
+      if(prevasset.propertyId !== data.propertyId){
+        const enableProperty = await prisma.property.update({
+          where:{
+            id: data.propertyId
+          },
+          data:{
+            eventStatus: true
+          },
+        });
+        const disableProperty = await prisma.property.update({
+          where:{
+            id: prevasset.propertyId
+          },
+          data:{
+            eventStatus: false
+          },
+        });
+      }
       return event;
     });
     return res.status(200).send(result);
@@ -210,3 +229,16 @@ exports.delete_event = asyncHandler(async (req, res) => {
     return res.status(400).send(error);
   }
 });
+
+// function changeEventStatus(dataObject){
+//   dataObject.forEach(async(element,index) => {
+//     await prisma.property.update({
+//       where:{
+//         id:  prevasset.propertyId
+//       },
+//       data:{
+//         eventStatus: false
+//       },
+//     });
+//   });
+// }
