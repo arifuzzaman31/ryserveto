@@ -28,14 +28,7 @@ exports.create_event = asyncHandler(async (req, res) => {
             status: data.status == "true" ? true : false,
         },
       });
-      await prisma.property.update({
-        where:{
-          id: data.propertyId
-        },
-        data:{
-          eventStatus: true
-        }
-      });
+      await changeEventStatus([{id:data.propertyId,eventStatus: true}]);
       return events;
     });
     return res.status(201).send(result);
@@ -130,22 +123,7 @@ exports.event_update = asyncHandler(async (req, res) => {
       });
 
       if(prevasset.propertyId !== data.propertyId){
-        const enableProperty = await prisma.property.update({
-          where:{
-            id: data.propertyId
-          },
-          data:{
-            eventStatus: true
-          },
-        });
-        const disableProperty = await prisma.property.update({
-          where:{
-            id: prevasset.propertyId
-          },
-          data:{
-            eventStatus: false
-          },
-        });
+       await changeEventStatus([{id:prevasset.propertyId,eventStatus:false},{id:data.propertyId,eventStatus:true}])
       }
       return event;
     });
@@ -230,15 +208,15 @@ exports.delete_event = asyncHandler(async (req, res) => {
   }
 });
 
-// function changeEventStatus(dataObject){
-//   dataObject.forEach(async(element,index) => {
-//     await prisma.property.update({
-//       where:{
-//         id:  prevasset.propertyId
-//       },
-//       data:{
-//         eventStatus: false
-//       },
-//     });
-//   });
-// }
+async function changeEventStatus(dataObject){
+  dataObject.forEach(async(element) => {
+    await prisma.property.update({
+      where:{
+        id:  element?.id
+      },
+      data:{
+        eventStatus: element?.eventStatus
+      },
+    });
+  });
+}
